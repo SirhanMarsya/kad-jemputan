@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 900" preserveAspectRatio="xMinYMin meet" aria-hidden="true">
+  <defs>
+    <linearGradient id="fabricR" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#f7f2eb" stop-opacity="0.78"/>
+      <stop offset="70%" stop-color="#fffaf5" stop-opacity="0.88"/>
+      <stop offset="100%" stop-color="#efe6da" stop-opacity="0.45"/>
+    </linearGradient>
+    <linearGradient id="shadeR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softR" x="-20%" y="-5%" width="140%" height="110%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+  </defs>
+  <path fill="url(#fabricR)" opacity="0.92" d="M10 0C60 20 100 70 125 150C160 280 180 420 192 560C202 680 208 790 212 900L150 900C142 780 125 650 90 520C55 390 20 250 2 120C0 80 0 30 10 0Z"/>
+  <path fill="#fff" opacity="0.35" d="M20 0C55 35 80 95 95 175C120 310 135 460 142 600C148 720 152 820 154 900L115 900C110 800 100 680 75 540C50 400 25 250 10 110C6 60 8 20 20 0Z"/>
+  <path fill="#e8ddd0" opacity="0.28" d="M35 8C65 50 84 115 98 200C120 350 130 510 136 650C140 760 142 840 144 900L108 900C104 810 95 690 72 545C50 400 30 255 18 120C14 70 20 25 35 8Z"/>
+  <path fill="#fff" opacity="0.22" d="M52 20C72 70 85 140 94 230C108 390 115 560 120 700C123 800 124 860 125 900L92 900C88 800 80 660 62 510C44 360 30 220 22 120C20 75 35 35 52 20Z"/>
+  <path fill="url(#shadeR)" filter="url(#softR)" d="M10 0C70 40 110 120 130 250C155 420 170 620 180 900L40 900C30 650 20 350 5 80C2 40 5 10 10 0Z"/>
+  <ellipse cx="45" cy="10" rx="42" ry="10" fill="#f5efe6" opacity="0.85"/>
+  <ellipse cx="75" cy="14" rx="28" ry="7" fill="#fff" opacity="0.5"/>
+</svg>

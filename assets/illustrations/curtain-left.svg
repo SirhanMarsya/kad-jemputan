@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 900" preserveAspectRatio="xMaxYMin meet" aria-hidden="true">
+  <defs>
+    <linearGradient id="fabricL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#f7f2eb" stop-opacity="0.78"/>
+      <stop offset="70%" stop-color="#fffaf5" stop-opacity="0.88"/>
+      <stop offset="100%" stop-color="#efe6da" stop-opacity="0.45"/>
+    </linearGradient>
+    <linearGradient id="shadeL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softL" x="-20%" y="-5%" width="140%" height="110%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+  </defs>
+  <!-- Outer cascade -->
+  <path fill="url(#fabricL)" opacity="0.92" d="M210 0C160 20 120 70 95 150C60 280 40 420 28 560C18 680 12 790 8 900L70 900C78 780 95 650 130 520C165 390 200 250 218 120C220 80 220 30 210 0Z"/>
+  <!-- Fold 1 -->
+  <path fill="#fff" opacity="0.35" d="M200 0C165 35 140 95 125 175C100 310 85 460 78 600C72 720 68 820 66 900L105 900C110 800 120 680 145 540C170 400 195 250 210 110C214 60 212 20 200 0Z"/>
+  <!-- Fold 2 -->
+  <path fill="#e8ddd0" opacity="0.28" d="M185 8C155 50 136 115 122 200C100 350 90 510 84 650C80 760 78 840 76 900L112 900C116 810 125 690 148 545C170 400 190 255 202 120C206 70 200 25 185 8Z"/>
+  <!-- Fold 3 (sheer highlight) -->
+  <path fill="#fff" opacity="0.22" d="M168 20C148 70 135 140 126 230C112 390 105 560 100 700C97 800 96 860 95 900L128 900C132 800 140 660 158 510C176 360 190 220 198 120C200 75 185 35 168 20Z"/>
+  <!-- Soft downward veil -->
+  <path fill="url(#shadeL)" filter="url(#softL)" d="M210 0C150 40 110 120 90 250C65 420 50 620 40 900L180 900C190 650 200 350 215 80C218 40 215 10 210 0Z"/>
+  <!-- Top gather / rod hint -->
+  <ellipse cx="175" cy="10" rx="42" ry="10" fill="#f5efe6" opacity="0.85"/>
+  <ellipse cx="145" cy="14" rx="28" ry="7" fill="#fff" opacity="0.5"/>
+</svg>

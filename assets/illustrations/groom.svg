@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 340" fill="none" aria-hidden="true">
+  <!-- Faceless Malay groom  baju melayu, tanjak, keris -->
+  <ellipse cx="100" cy="318" rx="58" ry="10" fill="#0a241f" opacity=".2"/>
+  <!-- Pants -->
+  <path d="M72 210h56v95c-10 4-22 6-28 6s-18-2-28-6V210Z" fill="#f7f4ef"/>
+  <!-- Samping -->
+  <path d="M68 188h64l-4 28H72l-4-28Z" fill="#f0ebe3"/>
+  <path d="M72 198h56" stroke="#c9a45c" stroke-width="2"/>
+  <path d="M72 208h56" stroke="#c9a45c" stroke-width="1.5" opacity=".7"/>
+  <!-- Keris -->
+  <path d="M128 198l18-28" stroke="#c9a45c" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="148" cy="168" r="4" fill="#e0c87a"/>
+  <!-- Baju -->
+  <path d="M62 118c6 40 12 70 18 92h40c6-22 12-52 18-92-14 10-32 14-38 14s-24-4-38-14Z" fill="#f7f4ef"/>
+  <!-- Collar -->
+  <path d="M88 118h24v10c-4 4-8 6-12 6s-8-2-12-6v-10Z" fill="#efeae3"/>
+  <!-- Arms -->
+  <path d="M62 120c-16 18-22 42-20 72" stroke="#f7f4ef" stroke-width="18" stroke-linecap="round"/>
+  <path d="M138 120c16 18 22 42 20 72" stroke="#f7f4ef" stroke-width="18" stroke-linecap="round"/>
+  <!-- Hands -->
+  <circle cx="44" cy="192" r="9" fill="#e8c4b0"/>
+  <circle cx="156" cy="192" r="9" fill="#e8c4b0"/>
+  <!-- Neck -->
+  <rect x="90" y="108" width="20" height="14" fill="#e8c4b0"/>
+  <!-- Face -->
+  <ellipse cx="100" cy="88" rx="24" ry="28" fill="#e8c4b0"/>
+  <!-- Tanjak -->
+  <path d="M72 72c4-28 16-44 28-48 12 4 24 20 28 48-8-6-18-10-28-10s-20 4-28 10Z" fill="#f7f4ef"/>
+  <path d="M78 70c8-18 14-28 22-30 8 2 14 12 22 30" fill="#efeae3"/>
+  <path d="M95 40c8-14 18-18 22-8-6 6-12 12-14 22" fill="#f7f4ef"/>
+  <!-- Shoes hint -->
+  <ellipse cx="82" cy="308" rx="16" ry="6" fill="#5c4636"/>
+  <ellipse cx="118" cy="308" rx="16" ry="6" fill="#5c4636"/>
+</svg>

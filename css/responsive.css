@@ -1,0 +1,181 @@
+/* ============================================
+   Responsive — tablet & mobile
+   ============================================ */
+
+@media (max-width: 900px) {
+  .mist {
+    top: 26%;
+    width: min(94%, 520px);
+  }
+
+  .pelamin__hotspots {
+    width: min(58%, 280px);
+    height: 36%;
+    top: 34%;
+  }
+
+  .info-card {
+    padding: 2.5rem 1.6rem 2.25rem;
+  }
+
+  .cinematic-title {
+    top: 12%;
+  }
+}
+
+@media (max-width: 720px) {
+  .section,
+  .section--greenhouse {
+    padding: 4rem 1.15rem;
+  }
+
+  .schedule__list {
+    max-width: 100%;
+    gap: 1.55rem;
+    --schedule-time-col: 5.75rem;
+    --schedule-gap: 1.15rem;
+  }
+
+  .schedule__hour {
+    font-size: 0.88rem;
+  }
+
+  .schedule__body h3 {
+    font-size: 1.12rem;
+  }
+
+  .countdown__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pelamin__intro {
+    margin-top: 4%;
+  }
+
+  .jemputan {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+  }
+
+  .info-card {
+    padding: 2.25rem 1.25rem 2rem;
+  }
+
+  .jemputan__groom,
+  .jemputan__bride {
+    font-size: clamp(1.1rem, 4vw, 1.35rem);
+  }
+
+  .jemputan__with {
+    font-size: clamp(0.92rem, 3vw, 1.05rem);
+  }
+
+  .pelamin.is-focus-groom .pelamin__bg-img,
+  .pelamin.is-focus-groom.is-couple-shown .pelamin__bg-img--couple {
+    transform-origin: 40% 46%;
+    transform: scale(1.62) translate3d(16%, 5%, 0);
+  }
+
+  .pelamin.is-focus-bride .pelamin__bg-img,
+  .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
+    transform-origin: 60% 46%;
+    transform: scale(1.62) translate3d(-16%, 5%, 0);
+  }
+
+  .pelamin__hotspots {
+    top: 33%;
+    width: min(64%, 300px);
+    height: 38%;
+  }
+
+  .mist {
+    top: 24%;
+    width: min(96%, 460px);
+  }
+
+  .mist--groom {
+    left: -8%;
+    right: auto;
+  }
+
+  .mist--bride {
+    right: -8%;
+    left: auto;
+  }
+
+  .music-fab {
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    right: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    width: 100%;
+  }
+
+  .btn-row {
+    flex-direction: column;
+  }
+
+  .form__fieldset {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .pelamin__names {
+    font-size: clamp(1.5rem, 6.5vw, 2.2rem);
+  }
+
+  .pelamin.is-focus-groom .pelamin__bg-img,
+  .pelamin.is-focus-groom.is-couple-shown .pelamin__bg-img--couple {
+    transform: scale(1.58) translate3d(14%, 4%, 0);
+  }
+
+  .pelamin.is-focus-bride .pelamin__bg-img,
+  .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
+    transform: scale(1.58) translate3d(-14%, 4%, 0);
+  }
+
+  .pelamin__hotspots {
+    top: 32%;
+    width: min(70%, 320px);
+    height: 40%;
+  }
+
+  .mist {
+    top: 22%;
+    width: min(98%, 400px);
+  }
+
+  .mist--groom {
+    left: -10%;
+    right: auto;
+  }
+
+  .mist--bride {
+    right: -10%;
+    left: auto;
+  }
+
+  .info-card {
+    padding: 2rem 1.1rem 1.85rem;
+  }
+
+  .jemputan__bismillah {
+    width: min(100%, 8.5rem);
+  }
+
+  .jemputan__honorific {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .card-frame {
+    width: min(100vw, calc(100dvh * 1080 / 1920));
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 340" fill="none" aria-hidden="true">
+  <!-- Faceless Malay bride  white attire, gold accents -->
+  <ellipse cx="100" cy="318" rx="58" ry="10" fill="#0a241f" opacity=".2"/>
+  <!-- Skirt / baju -->
+  <path d="M48 160c8 58 18 110 28 145h48c10-35 20-87 28-145-20 12-44 18-52 18s-32-6-52-18Z" fill="#f7f4ef"/>
+  <path d="M48 160c20 12 44 18 52 18s32-6 52-18" stroke="#e8e2d8" stroke-width="1"/>
+  <!-- Pending belt -->
+  <rect x="72" y="168" width="56" height="14" rx="2" fill="#c9a45c"/>
+  <circle cx="100" cy="175" r="7" fill="#e0c87a"/>
+  <circle cx="100" cy="175" r="3.5" fill="#a8873d"/>
+  <!-- Bodice -->
+  <path d="M70 118c8 20 18 40 30 42 12-2 22-22 30-42-14 8-30 12-30 12s-16-4-30-12Z" fill="#f7f4ef"/>
+  <!-- Hijab -->
+  <path d="M62 78c4-36 24-58 38-58s34 22 38 58c-6 8-18 14-38 14S68 86 62 78Z" fill="#f7f4ef"/>
+  <path d="M70 86c6 28 14 40 30 42 16-2 24-14 30-42" fill="#efeae3"/>
+  <!-- Face (blank) -->
+  <ellipse cx="100" cy="96" rx="22" ry="26" fill="#e8c4b0"/>
+  <!-- Neck -->
+  <rect x="92" y="118" width="16" height="14" fill="#e8c4b0"/>
+  <!-- Gold necklace -->
+  <path d="M84 128c8 14 24 18 32 0" stroke="#c9a45c" stroke-width="3" fill="none"/>
+  <circle cx="100" cy="140" r="5" fill="#e0c87a"/>
+  <!-- Arms -->
+  <path d="M70 124c-18 22-24 48-22 78" stroke="#f7f4ef" stroke-width="16" stroke-linecap="round"/>
+  <path d="M130 124c18 22 24 48 22 78" stroke="#f7f4ef" stroke-width="16" stroke-linecap="round"/>
+  <!-- Bouquet -->
+  <circle cx="48" cy="198" r="14" fill="#d4e0c8"/>
+  <circle cx="40" cy="190" r="8" fill="#f0e6a8"/>
+  <circle cx="56" cy="188" r="7" fill="#f5f5f0"/>
+  <circle cx="46" cy="204" r="6" fill="#9eb888"/>
+</svg>

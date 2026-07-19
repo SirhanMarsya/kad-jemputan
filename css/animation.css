@@ -1,0 +1,313 @@
+/* ============================================
+   Animations — doors, lights, sparkles, reveal
+   ============================================ */
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes bulb-glow {
+  0%,
+  100% {
+    opacity: 0.75;
+    box-shadow: 0 0 10px 3px rgba(224, 200, 122, 0.45);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 18px 6px rgba(224, 200, 122, 0.8);
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes curtain-sway-left {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(5px) rotate(0.4deg);
+  }
+}
+
+@keyframes curtain-sway-right {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-5px) rotate(-0.4deg);
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(110vh) translateX(var(--drift, 40px)) rotate(520deg);
+    opacity: 0.15;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-note {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes petal-burst-fall {
+  0% {
+    transform: translateY(-8%) translateX(0) rotate(0deg) scale(0.85);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(120%) translateX(var(--drift, 40px)) rotate(540deg) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Petal rain — soft falling petals over the scene */
+.petal-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.petal-rain.is-active {
+  opacity: 1;
+}
+
+.petal {
+  position: absolute;
+  top: -8%;
+  width: 12px;
+  height: 10px;
+  border-radius: 70% 0 70% 0;
+  background: linear-gradient(135deg, #fff8f2, #f0d4c8 55%, #e8b4b0);
+  opacity: 0;
+  animation: petal-fall linear infinite;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+}
+
+/* One-shot burst when doors open */
+.petal--burst {
+  position: absolute;
+  top: -6%;
+  z-index: 1200;
+  pointer-events: none;
+  border-radius: 70% 0 70% 0;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+  animation-name: petal-burst-fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+.petal:nth-child(odd) {
+  background: linear-gradient(135deg, #fff, #f5efe6 50%, #e8dcc8);
+  border-radius: 60% 40% 60% 40%;
+}
+
+.petal:nth-child(3n) {
+  background: linear-gradient(135deg, #f7f4ef, #d4e0c8);
+  width: 9px;
+  height: 8px;
+}
+
+.petal:nth-child(1) {
+  left: 6%;
+  --drift: 48px;
+  animation-duration: 11s;
+  animation-delay: 0s;
+}
+.petal:nth-child(2) {
+  left: 14%;
+  --drift: -36px;
+  animation-duration: 13s;
+  animation-delay: 1.2s;
+  width: 8px;
+}
+.petal:nth-child(3) {
+  left: 22%;
+  --drift: 28px;
+  animation-duration: 10s;
+  animation-delay: 2.4s;
+}
+.petal:nth-child(4) {
+  left: 30%;
+  --drift: -52px;
+  animation-duration: 14s;
+  animation-delay: 0.6s;
+}
+.petal:nth-child(5) {
+  left: 38%;
+  --drift: 20px;
+  animation-duration: 12s;
+  animation-delay: 3.1s;
+  width: 10px;
+}
+.petal:nth-child(6) {
+  left: 46%;
+  --drift: -24px;
+  animation-duration: 11.5s;
+  animation-delay: 1.8s;
+}
+.petal:nth-child(7) {
+  left: 54%;
+  --drift: 40px;
+  animation-duration: 13.5s;
+  animation-delay: 0.3s;
+}
+.petal:nth-child(8) {
+  left: 62%;
+  --drift: -30px;
+  animation-duration: 10.5s;
+  animation-delay: 2.8s;
+  width: 7px;
+}
+.petal:nth-child(9) {
+  left: 70%;
+  --drift: 35px;
+  animation-duration: 12.5s;
+  animation-delay: 1.5s;
+}
+.petal:nth-child(10) {
+  left: 78%;
+  --drift: -45px;
+  animation-duration: 14.5s;
+  animation-delay: 3.6s;
+}
+.petal:nth-child(11) {
+  left: 86%;
+  --drift: 22px;
+  animation-duration: 11s;
+  animation-delay: 0.9s;
+}
+.petal:nth-child(12) {
+  left: 10%;
+  --drift: -18px;
+  animation-duration: 15s;
+  animation-delay: 4.2s;
+  width: 11px;
+}
+.petal:nth-child(13) {
+  left: 42%;
+  --drift: 55px;
+  animation-duration: 9.5s;
+  animation-delay: 2s;
+}
+.petal:nth-child(14) {
+  left: 58%;
+  --drift: -40px;
+  animation-duration: 13s;
+  animation-delay: 4.8s;
+}
+.petal:nth-child(15) {
+  left: 74%;
+  --drift: 15px;
+  animation-duration: 10s;
+  animation-delay: 3.3s;
+}
+.petal:nth-child(16) {
+  left: 90%;
+  --drift: -28px;
+  animation-duration: 12s;
+  animation-delay: 1s;
+}
+.petal:nth-child(17) {
+  left: 26%;
+  --drift: 32px;
+  animation-duration: 14s;
+  animation-delay: 5.2s;
+  width: 8px;
+}
+.petal:nth-child(18) {
+  left: 66%;
+  --drift: -22px;
+  animation-duration: 11s;
+  animation-delay: 2.2s;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-shown {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal.is-shown:nth-child(2) {
+  transition-delay: 0.08s;
+}
+
+.reveal.is-shown:nth-child(3) {
+  transition-delay: 0.16s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .petal-rain {
+    display: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

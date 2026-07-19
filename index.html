@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Wedding Invitation — Sirhan & Marsya" />
+  <title>Sirhan & Marsya — Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animation.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <div class="card-frame" id="cardFrame">
+    <div class="card-frame__scroll" id="cardScroll">
+  <!-- Front page sits behind frosted glass doors -->
+  <div id="invitation" class="invitation is-behind-glass" aria-hidden="true">
+    <!-- Pelamin scene — cinematic layers + interactive zoom/pan -->
+    <header class="pelamin is-cinematic-pending" id="hero">
+      <div class="pelamin__bg" aria-hidden="true">
+        <!-- Empty pelamin (no couple) — shown after doors open -->
+        <img
+          class="pelamin__bg-img pelamin__bg-img--empty"
+          id="pelaminBgEmpty"
+          src="assets/illustrations/pelamin.png"
+          alt=""
+          width="1080"
+          height="1920"
+          decoding="async"
+        />
+        <!-- Full scene with couple — fades in at cinematic couple stage -->
+        <img
+          class="pelamin__bg-img pelamin__bg-img--couple"
+          id="pelaminBgCouple"
+          src="assets/illustrations/pelamin_pengantin.PNG"
+          alt=""
+          width="1080"
+          height="1920"
+          decoding="async"
+        />
+      </div>
+      <div class="pelamin__veil" aria-hidden="true"></div>
+      <div class="pelamin__focus-veil" aria-hidden="true"></div>
+      <div class="petal-rain" aria-hidden="true">
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+        <span class="petal"></span><span class="petal"></span><span class="petal"></span>
+      </div>
+
+      <!-- Stage 3 title overlay (UNDANGAN PERKAHWINAN) -->
+      <div class="cinematic-title" id="cinematicTitle" aria-hidden="true">
+        <p class="cinematic-title__text">UNDANGAN PERKAHWINAN</p>
+      </div>
+
+      <div class="pelamin__intro" id="pelaminIntro">
+        <h1 class="pelamin__names">
+          <span class="name-script">Sirhan</span>
+          <span class="pelamin__cinta" aria-label="dan">
+            <span class="pelamin__cinta-word">cinta</span>
+          </span>
+          <span class="name-script">Marsya</span>
+        </h1>
+      </div>
+
+      <!-- Invisible tap zones over the couple (after pelamin_pengantin is shown) -->
+      <div class="pelamin__hotspots" id="couple">
+        <button
+          type="button"
+          class="figure figure--groom"
+          data-person="groom"
+          aria-expanded="false"
+          aria-controls="groomDetails"
+          aria-label="Sirhan — tap untuk lihat ibu bapa"
+        >
+          <span class="figure__label">Pengantin Lelaki</span>
+        </button>
+        <button
+          type="button"
+          class="figure figure--bride"
+          data-person="bride"
+          aria-expanded="false"
+          aria-controls="brideDetails"
+          aria-label="Marsya — tap untuk lihat ibu bapa"
+        >
+          <span class="figure__label">Pengantin Perempuan</span>
+        </button>
+      </div>
+
+      <!-- Parent detail panels -->
+      <aside class="mist mist--groom" id="groomDetails" aria-hidden="true">
+        <img
+          class="mist__img"
+          src="assets/illustrations/groom-details.png"
+          alt="Sirhan, putera kepada Hj. Mohd Sani Bin Said dan Hjh. Nik Suriani Binti Hj. Nik Fauzi"
+          width="640"
+          height="610"
+          decoding="async"
+        />
+      </aside>
+
+      <aside class="mist mist--bride" id="brideDetails" aria-hidden="true">
+        <img
+          class="mist__img"
+          src="assets/illustrations/bride-details.png"
+          alt="Marsya, puteri kepada Hj. Faisharul Arman Bin Hj. Abdul Latiff dan Hjh. Ross Liza Binti Hj. Othman"
+          width="640"
+          height="610"
+          decoding="async"
+        />
+      </aside>
+    </header>
+
+    <main class="main--story">
+      <section class="section section--greenhouse jemputan" id="jemputan">
+        <div class="section__header reveal">
+          <h2 class="section__title title-arc">
+            <svg class="title-arc__svg" viewBox="0 0 360 58" role="img" aria-label="Walimatul Urus">
+              <defs>
+                <path id="titleArc-jemputan" d="M 16 46 Q 180 6 344 46" fill="none" />
+              </defs>
+              <text class="title-arc__text">
+                <textPath href="#titleArc-jemputan" xlink:href="#titleArc-jemputan" startOffset="50%" text-anchor="middle">
+                  Majlis Perkahwinan
+                </textPath>
+              </text>
+            </svg>
+          </h2>
+        </div>
+
+        <article class="jemputan__content reveal">
+          <img
+            class="jemputan__bismillah"
+            src="assets/illustrations/bismillah.png"
+            alt="بسم الله الرحمن الرحيم"
+            width="900"
+            height="225"
+            decoding="async"
+          />
+
+          <p class="jemputan__verse">
+            Dengan izin Allah SWT yang Maha Pengasih, kami menyulam takdir yang
+            tersurat, menyatukan dua hati dalam satu janji yang halal dan abadi
+          </p>
+
+          <div class="jemputan__hosts">
+            <p class="jemputan__host">Hj Mohd Sani Bin Said</p>
+            <p class="jemputan__amp" aria-hidden="true">&amp;</p>
+            <p class="jemputan__host">Hjh Nik Suriani Binti Hj Nik Fauzi</p>
+          </div>
+
+          <p class="jemputan__lead">
+            Dengan penuh kesyukuran ke hadrat Illahi dan setulus ikhlas,<br />
+            kami dengan segala hormatnya mengundang
+          </p>
+
+          <p class="jemputan__honorific">Dato' / Datin / Tuan / Puan / Encik / Cik</p>
+
+          <p class="jemputan__invite-line">serta pasangan ke majlis perkahwinan putera kami,</p>
+
+          <div class="jemputan__couple-block">
+            <p class="jemputan__groom">
+              Dr. Muhammad Sirhan
+            </p>
+            <p class="jemputan__with">dengan pilihan hatinya</p>
+            <p class="jemputan__bride">
+              Marsya Iman
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section class="section section--greenhouse countdown" id="countdown">
+        <div class="section__header reveal">
+          <h2 class="section__title title-arc">
+            <svg class="title-arc__svg" viewBox="0 0 360 58" role="img" aria-label="Tarikh & Waktu">
+              <defs>
+                <path id="titleArc-countdown" d="M 16 46 Q 180 6 344 46" fill="none" />
+              </defs>
+              <text class="title-arc__text">
+                <textPath href="#titleArc-countdown" xlink:href="#titleArc-countdown" startOffset="50%" text-anchor="middle">
+                  Tarikh &amp; Waktu
+                </textPath>
+              </text>
+            </svg>
+          </h2>
+        </div>
+
+        <dl class="countdown__meta reveal">
+          <div class="countdown__meta-row">
+            <dt>Pada</dt>
+            <dd>Sabtu, 17 Oktober 2026</dd>
+          </div>
+          <div class="countdown__meta-row">
+            <dt>Bersamaan</dt>
+            <dd>6 Jamadilawal 1448 Hijrah</dd>
+          </div>
+          <div class="countdown__meta-row">
+            <dt>Waktu</dt>
+            <dd>11:00 Pagi - 4:00 Petang</dd>
+          </div>
+        </dl>
+
+        <div class="countdown__grid reveal" id="countdownTimer" aria-live="polite">
+          <div class="countdown__item">
+            <span class="countdown__value" data-unit="days">0</span>
+            <span class="countdown__label">Hari</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__value" data-unit="hours">0</span>
+            <span class="countdown__label">Jam</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__value" data-unit="minutes">0</span>
+            <span class="countdown__label">Minit</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__value" data-unit="seconds">0</span>
+            <span class="countdown__label">Saat</span>
+          </div>
+        </div>
+        <div class="btn-row btn-row--calendar reveal">
+          <button type="button" class="btn btn--icon" id="calGoogle" aria-label="Tambah ke Google Calendar">
+            <img class="btn__icon" src="assets/icons/gcalendar.png" alt="" width="48" height="48" decoding="async" />
+          </button>
+          <button type="button" class="btn btn--icon" id="calApple" aria-label="Tambah ke Apple Calendar">
+            <img class="btn__icon" src="assets/icons/applecalendar.png" alt="" width="48" height="48" decoding="async" />
+          </button>
+        </div>
+      </section>
+
+      <section class="section section--greenhouse location" id="location">
+        <div class="section__header reveal">
+          <h2 class="section__title title-arc">
+            <svg class="title-arc__svg" viewBox="0 0 360 58" role="img" aria-label="Tempat & Arah">
+              <defs>
+                <path id="titleArc-location" d="M 16 46 Q 180 6 344 46" fill="none" />
+              </defs>
+              <text class="title-arc__text">
+                <textPath href="#titleArc-location" xlink:href="#titleArc-location" startOffset="50%" text-anchor="middle">
+                  <!-- Tempat &amp; Arah -->
+                  Lokasi Majlis
+                </textPath>
+              </text>
+            </svg>
+          </h2>
+        </div>
+        <div class="location__content reveal">
+          <p class="location__address">Ruang Acara Nadi Rafanda</p>
+          <p class="location__area">No. 1 Jalan Meteor P U16/P, Elmina East, 40160 Shah Alam, Selangor</p>
+          <div class="btn-row">
+            <a
+              class="btn btn--icon"
+              href="https://www.google.com/maps/search/?api=1&amp;query=Ruang+Acara+Nadi+Rafanda+Elmina+East"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Buka Google Maps"
+            >
+              <img class="btn__icon" src="assets/icons/gmap.png" alt="" width="48" height="48" decoding="async" />
+            </a>
+            <a
+              class="btn btn--icon"
+              href="https://waze.com/ul/hw281yrczu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Buka lokasi di Waze"
+            >
+              <img class="btn__icon" src="assets/icons/waze.png" alt="" width="48" height="48" decoding="async" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--greenhouse schedule" id="schedule">
+        <div class="section__header reveal">
+          <h2 class="section__title title-arc">
+            <svg class="title-arc__svg" viewBox="0 0 360 58" role="img" aria-label="Aturcara Majlis">
+              <defs>
+                <path id="titleArc-schedule" d="M 16 46 Q 180 6 344 46" fill="none" />
+              </defs>
+              <text class="title-arc__text">
+                <textPath href="#titleArc-schedule" xlink:href="#titleArc-schedule" startOffset="50%" text-anchor="middle">
+                  Aturcara Majlis
+                </textPath>
+              </text>
+            </svg>
+          </h2>
+        </div>
+        <div class="schedule__list reveal">
+          <article class="schedule__item">
+            <time class="schedule__hour" datetime="11:00">11.00 am</time>
+            <div class="schedule__body">
+              <h3>Ketibaan Tetamu</h3>
+            </div>
+          </article>
+          <article class="schedule__item">
+            <time class="schedule__hour" datetime="12:00">12.00 pm</time>
+            <div class="schedule__body">
+              <h3>Ketibaan Pengantin</h3>
+            </div>
+          </article>
+          <article class="schedule__item">
+            <time class="schedule__hour" datetime="16:00">03.30 pm</time>
+            <div class="schedule__body">
+              <h3>Majlis Tamat</h3>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section rsvp" id="rsvp">
+        <div class="section__header reveal">
+          <h2 class="section__title title-arc">
+            <svg class="title-arc__svg" viewBox="0 0 360 58" role="img" aria-label="RSVP">
+              <defs>
+                <path id="titleArc-rsvp" d="M 16 46 Q 180 6 344 46" fill="none" />
+              </defs>
+              <text class="title-arc__text">
+                <textPath href="#titleArc-rsvp" xlink:href="#titleArc-rsvp" startOffset="50%" text-anchor="middle">
+                  RSVP
+                </textPath>
+              </text>
+            </svg>
+          </h2>
+          <p class="rsvp__note">
+            Sila RSVP kehadiran anda<br />
+            sebelum 17 September 2026
+          </p>
+        </div>
+        <form class="form reveal" id="rsvpForm" novalidate>
+          <label class="form__field">
+            <span>Nama Anda</span>
+            <input type="text" name="name" id="rsvpName" required autocomplete="name" placeholder="Nama penuh" />
+          </label>
+
+          <fieldset class="form__fieldset">
+            <legend>Kehadiran?</legend>
+            <label class="radio">
+              <input type="radio" name="attend" value="Yes" required />
+              <span>Hadir</span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="attend" value="No" />
+              <span>Tidak Hadir</span>
+            </label>
+          </fieldset>
+
+          <div class="form__details" id="rsvpDetails" hidden>
+            <label class="form__field">
+              <span>Bilangan Tetamu</span>
+              <input type="number" name="guests" id="rsvpGuests" min="1" max="10" value="1" />
+            </label>
+
+            <label class="form__field">
+              <span>No. Telefon</span>
+              <input type="tel" name="phone" id="rsvpPhone" autocomplete="tel" placeholder="01X-XXXXXXX" />
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn--primary" id="rsvpSubmit">Hantar RSVP</button>
+          <p class="form__status" id="rsvpStatus" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="section wishes" id="wishes">
+        <div class="section__header reveal">
+          <h2 class="section__title title-arc">
+            <svg class="title-arc__svg" viewBox="0 0 360 58" role="img" aria-label="Ucapan Pengantin">
+              <defs>
+                <path id="titleArc-wishes" d="M 16 46 Q 180 6 344 46" fill="none" />
+              </defs>
+              <text class="title-arc__text">
+                <textPath href="#titleArc-wishes" xlink:href="#titleArc-wishes" startOffset="50%" text-anchor="middle">
+                  Ucapan Pengantin
+                </textPath>
+              </text>
+            </svg>
+          </h2>
+        </div>
+        <form class="form form--compact reveal" id="wishesForm" novalidate>
+          <label class="form__field">
+            <span>Nama Anda</span>
+            <input type="text" name="name" id="wishName" required autocomplete="name" placeholder="Nama anda" />
+          </label>
+          <label class="form__field">
+            <span>Ucapan Anda</span>
+            <textarea name="wish" id="wishText" rows="3" required placeholder="Tulis ucapan..."></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary" id="wishSubmit">Hantar Ucapan</button>
+          <p class="form__status" id="wishStatus" role="status" aria-live="polite"></p>
+        </form>
+        <div class="wishes__list" id="wishesList" aria-live="polite" tabindex="0"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p class="footer__note">
+        Kehadiran tuan/puan amatlah kami alukan bagi menyerikan lagi majlis dan mendoakan kesejahteraan mempelai.
+      </p>
+      <p class="footer__ornament" aria-hidden="true">✦</p>
+    </footer>
+  </div>
+
+  <!-- Frosted glass doors overlay -->
+  <section id="landing" class="landing">
+    <button type="button" class="glass-doors" id="openInvitation" aria-label="Buka undangan">
+      <span class="glass-doors__pane glass-doors__pane--left" aria-hidden="true">
+        <span class="glass-doors__shine"></span>
+        <span class="glass-doors__handle"></span>
+      </span>
+      <span class="glass-doors__pane glass-doors__pane--right" aria-hidden="true">
+        <span class="glass-doors__shine"></span>
+        <span class="glass-doors__handle"></span>
+      </span>
+      <span class="glass-doors__seam" aria-hidden="true"></span>
+    </button>
+  </section>
+    </div><!-- /.card-frame__scroll -->
+
+  <!-- Bottom navigation (shown after doors open) -->
+  <nav class="bottom-nav" id="bottomNav" hidden aria-hidden="true" aria-label="Navigasi undangan">
+    <a class="bottom-nav__item" href="#hero" data-nav="hero">
+      <span class="bottom-nav__icon" aria-hidden="true">⌂</span>
+      <span class="bottom-nav__label">Utama</span>
+    </a>
+    <a class="bottom-nav__item" href="#countdown" data-nav="countdown">
+      <span class="bottom-nav__icon" aria-hidden="true">◷</span>
+      <span class="bottom-nav__label">Tarikh</span>
+    </a>
+    <a class="bottom-nav__item" href="#location" data-nav="location">
+      <span class="bottom-nav__icon" aria-hidden="true">◎</span>
+      <span class="bottom-nav__label">Lokasi</span>
+    </a>
+    <a class="bottom-nav__item" href="#schedule" data-nav="schedule">
+      <span class="bottom-nav__icon" aria-hidden="true">◇</span>
+      <span class="bottom-nav__label">Aturcara</span>
+    </a>
+    <a class="bottom-nav__item" href="#rsvp" data-nav="rsvp">
+      <span class="bottom-nav__icon" aria-hidden="true">✓</span>
+      <span class="bottom-nav__label">RSVP</span>
+    </a>
+    <a class="bottom-nav__item" href="#wishes" data-nav="wishes">
+      <span class="bottom-nav__icon" aria-hidden="true">❧</span>
+      <span class="bottom-nav__label">Ucapan</span>
+    </a>
+    <button type="button" class="bottom-nav__item" id="navContact" data-nav="contact" aria-haspopup="dialog" aria-controls="contactPopup">
+      <span class="bottom-nav__icon" aria-hidden="true">☎</span>
+      <span class="bottom-nav__label">Hubungi</span>
+    </button>
+    <button
+      type="button"
+      class="bottom-nav__hide"
+      id="navHideBtn"
+      aria-label="Sembunyikan navigasi"
+      title="Sembunyikan navigasi"
+    >
+      <span aria-hidden="true">▾</span>
+    </button>
+  </nav>
+
+  <!-- Show nav again when it is hidden -->
+  <button
+    type="button"
+    class="nav-show-btn"
+    id="navShowBtn"
+    hidden
+    aria-label="Tunjuk navigasi"
+    title="Tunjuk navigasi"
+  >
+    <span aria-hidden="true">▴</span>
+  </button>
+
+  <!-- Contact popup -->
+  <div class="popup" id="contactPopup" hidden role="dialog" aria-modal="true" aria-labelledby="contactPopupTitle">
+    <div class="popup__backdrop" data-close-popup></div>
+    <div class="popup__panel">
+      <button type="button" class="popup__close" data-close-popup aria-label="Tutup">×</button>
+      <p class="popup__eyebrow">Hubungi</p>
+      <h2 class="popup__title" id="contactPopupTitle">Sebarang Pertanyaan</h2>
+      <div class="popup__contacts">
+        <article class="contact__item">
+          <div class="contact__info">
+            <span class="contact__name">Mohd Sani</span>
+            <span class="contact__phone">019-911 7558</span>
+          </div>
+          <div class="contact__actions">
+            <a
+              class="contact__action"
+              href="https://wa.me/60199117558"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp Mohd Sani"
+            >
+              <img src="assets/icons/whatsapp.svg" alt="" width="28" height="28" />
+            </a>
+            <a class="contact__action" href="tel:+60199117558" aria-label="Telefon Mohd Sani">
+              <img src="assets/icons/call.svg" alt="" width="28" height="28" />
+            </a>
+          </div>
+        </article>
+
+        <article class="contact__item">
+          <div class="contact__info">
+            <span class="contact__name">Nik Suriani</span>
+            <span class="contact__phone">019-956 9558</span>
+          </div>
+          <div class="contact__actions">
+            <a
+              class="contact__action"
+              href="https://wa.me/60199569558"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp Nik Suriani"
+            >
+              <img src="assets/icons/whatsapp.svg" alt="" width="28" height="28" />
+            </a>
+            <a class="contact__action" href="tel:+60199569558" aria-label="Telefon Nik Suriani">
+              <img src="assets/icons/call.svg" alt="" width="28" height="28" />
+            </a>
+          </div>
+        </article>
+
+        <article class="contact__item">
+          <div class="contact__info">
+            <span class="contact__name">Samuel</span>
+            <span class="contact__phone">011-3350 6987</span>
+          </div>
+          <div class="contact__actions">
+            <a
+              class="contact__action"
+              href="https://wa.me/601133506987"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp Samuel"
+            >
+              <img src="assets/icons/whatsapp.svg" alt="" width="28" height="28" />
+            </a>
+            <a class="contact__action" href="tel:+601133506987" aria-label="Telefon Samuel">
+              <img src="assets/icons/call.svg" alt="" width="28" height="28" />
+            </a>
+          </div>
+        </article>
+
+        <article class="contact__item">
+          <div class="contact__info">
+            <span class="contact__name">Saqeef</span>
+            <span class="contact__phone">016-980 9852</span>
+          </div>
+          <div class="contact__actions">
+            <a
+              class="contact__action"
+              href="https://wa.me/60169809852"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp Saqeef"
+            >
+              <img src="assets/icons/whatsapp.svg" alt="" width="28" height="28" />
+            </a>
+            <a class="contact__action" href="tel:+60169809852" aria-label="Telefon Saqeef">
+              <img src="assets/icons/call.svg" alt="" width="28" height="28" />
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div class="music-fab" id="musicFab" hidden>
+    <button type="button" class="music-fab__btn" id="musicToggle" aria-label="Toggle music" aria-pressed="false">
+      <span class="music-fab__icon" id="musicIcon">♪</span>
+    </button>
+    <div class="music-fab__panel" id="musicPanel" hidden>
+      <button type="button" id="musicPlay">Play</button>
+      <button type="button" id="musicPause">Pause</button>
+      <label class="music-fab__vol">
+        Volume
+        <input type="range" id="musicVolume" min="0" max="100" value="60" />
+      </label>
+      <p class="music-fab__playlist">Nuca — Masa ini, Nanti, dan Masa Indah Lainnya</p>
+    </div>
+  </div>
+  </div><!-- /.card-frame -->
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="assets/music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div id="ytPlayer" class="yt-host" aria-hidden="true"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/rsvp.js"></script>
+  <script src="js/wishes.js"></script>
+  <script src="js/cinematic.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
