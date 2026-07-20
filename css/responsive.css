@@ -69,6 +69,10 @@
     white-space: normal;
   }
 
+  .glass-doors__logo {
+    --logo-size: min(48cqi, 200px);
+  }
+
   .countdown__grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 0.45rem;
@@ -194,7 +198,11 @@
   }
 
   .pelamin__names {
-    font-size: clamp(1.45rem, 6.2vw, 2rem);
+    font-size: clamp(2.15rem, 11vw, 2.85rem);
+  }
+
+  .pelamin__cinta-word {
+    font-size: clamp(1.05rem, 4.2vw, 1.35rem);
   }
 
   .pelamin.is-focus-groom .pelamin__bg-img,

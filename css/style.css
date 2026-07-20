@@ -369,6 +369,8 @@ a {
   cursor: pointer;
   overflow: hidden;
   perspective: 1400px;
+  container-type: inline-size;
+  container-name: doors;
 }
 
 .glass-doors__pane {
@@ -407,6 +409,53 @@ a {
   );
   pointer-events: none;
   opacity: 0.75;
+  z-index: 2;
+}
+
+/* Split monogram — centered on the seam; each pane shows half */
+.glass-doors__logo {
+  /* Size relative to door width so it stays centered in the card */
+  --logo-size: min(42cqi, 220px);
+  position: absolute;
+  top: 50%;
+  width: calc(var(--logo-size) / 2);
+  height: var(--logo-size);
+  transform: translateY(-50%);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+.glass-doors__logo img {
+  position: absolute;
+  top: 50%;
+  width: var(--logo-size);
+  height: var(--logo-size);
+  max-width: none;
+  object-fit: contain;
+  display: block;
+  transform: translateY(-50%);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.glass-doors__logo--left {
+  right: 0;
+}
+
+.glass-doors__logo--left img {
+  left: 0;
+}
+
+.glass-doors__logo--right {
+  left: 0;
+}
+
+.glass-doors__logo--right img {
+  right: 0;
 }
 
 .glass-doors__pane--left {
@@ -452,15 +501,15 @@ a {
   box-shadow:
     0 0 0 3px rgba(255, 255, 255, 0.35),
     0 8px 20px rgba(0, 0, 0, 0.2);
-  z-index: 2;
+  z-index: 3;
 }
 
 .glass-doors__pane--left .glass-doors__handle {
-  right: 18%;
+  right: 30%;
 }
 
 .glass-doors__pane--right .glass-doors__handle {
-  left: 18%;
+  left: 30%;
 }
 
 .glass-doors__handle::before,

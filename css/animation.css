@@ -118,6 +118,14 @@
   opacity: 1;
 }
 
+/* Ease GPU load on phones during cinematic auto-scroll */
+body.is-auto-scrolling .petal-rain,
+body.is-auto-scrolling .petal,
+body.is-auto-scrolling .petal--burst {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
 .petal {
   position: absolute;
   top: -8%;

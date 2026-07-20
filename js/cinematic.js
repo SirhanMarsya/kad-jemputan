@@ -117,12 +117,40 @@
     scrollRoot.style.overflowY = "";
   }
 
-  // ----- Interrupt: any user interaction stops cinematic -----
-  function onUserInteract(e) {
-    // Ignore pure mouse-move; require intentional input
+  // ----- Interrupt: user interaction stops cinematic -----
+  let touchStartY = null;
+
+  function onUserInteract() {
     if (!running && !autoScrollRaf) return;
-    // Don't treat music toggle as "stop cinematic" only — still ok to stop
     abortCinematic();
+  }
+
+  function onTouchStart(e) {
+    if (!running && !autoScrollRaf) return;
+    // During auto-scroll, wait for a real swipe — a light tap shouldn't kill it
+    if (autoScrollRaf && !running) {
+      const t = e.touches && e.touches[0];
+      touchStartY = t ? t.clientY : null;
+      return;
+    }
+    onUserInteract();
+  }
+
+  function onTouchMove(e) {
+    if (!autoScrollRaf || running) return;
+    const t = e.touches && e.touches[0];
+    if (!t || touchStartY == null) return;
+    if (Math.abs(t.clientY - touchStartY) > 14) {
+      touchStartY = null;
+      onUserInteract();
+    }
+  }
+
+  function onPointerDown(e) {
+    if (!running && !autoScrollRaf) return;
+    // Ignore while auto-scrolling (touch handlers cover mobile; mouse uses wheel)
+    if (autoScrollRaf && !running && e.pointerType === "touch") return;
+    onUserInteract();
   }
 
   function bindInteractAbort() {
@@ -131,19 +159,22 @@
     const opts = { passive: true, capture: true };
     const root = document.getElementById("cardFrame") || document;
     root.addEventListener("wheel", onUserInteract, opts);
-    root.addEventListener("touchstart", onUserInteract, opts);
-    root.addEventListener("pointerdown", onUserInteract, opts);
+    root.addEventListener("touchstart", onTouchStart, opts);
+    root.addEventListener("touchmove", onTouchMove, opts);
+    root.addEventListener("pointerdown", onPointerDown, opts);
     root.addEventListener("keydown", onUserInteract, opts);
   }
 
   function unbindInteractAbort() {
     if (!interactBound) return;
     interactBound = false;
+    touchStartY = null;
     const opts = { capture: true };
     const root = document.getElementById("cardFrame") || document;
     root.removeEventListener("wheel", onUserInteract, opts);
-    root.removeEventListener("touchstart", onUserInteract, opts);
-    root.removeEventListener("pointerdown", onUserInteract, opts);
+    root.removeEventListener("touchstart", onTouchStart, opts);
+    root.removeEventListener("touchmove", onTouchMove, opts);
+    root.removeEventListener("pointerdown", onPointerDown, opts);
     root.removeEventListener("keydown", onUserInteract, opts);
   }
 
@@ -152,6 +183,7 @@
     aborted = true;
     clearTimers();
     cancelAutoScroll();
+    document.body.classList.remove("is-auto-scrolling");
 
     const scene = document.getElementById("hero");
     const intro = document.getElementById("pelaminIntro");
@@ -163,6 +195,7 @@
   // ----- Stage 9: auto-scroll (cancel on user scroll) -----
   function cancelAutoScroll() {
     autoScrollCancelled = true;
+    document.body.classList.remove("is-auto-scrolling");
     if (autoScrollRaf) {
       cancelAnimationFrame(autoScrollRaf);
       autoScrollRaf = null;
@@ -174,6 +207,12 @@
 
     const root = getScrollRoot();
     autoScrollCancelled = false;
+    document.body.classList.add("is-auto-scrolling");
+
+    // Reveal everything up front so section heights don't jump mid-scroll
+    document.querySelectorAll(".reveal:not(.is-shown)").forEach((el) => {
+      el.classList.add("is-shown");
+    });
 
     root.style.overflowY = "auto";
     const prevBehavior = root.style.scrollBehavior;
@@ -190,7 +229,10 @@
         if (aborted) return;
         end = measureEnd();
         if (end > 4) startTween(root, 0, end, prevBehavior);
-        else root.style.scrollBehavior = prevBehavior || "";
+        else {
+          root.style.scrollBehavior = prevBehavior || "";
+          document.body.classList.remove("is-auto-scrolling");
+        }
       });
       return;
     }
@@ -199,31 +241,44 @@
   }
 
   function startTween(root, start, end, prevBehavior) {
-    const duration = DUR.AUTO_SCROLL;
-    const t0 = performance.now();
+    // Constant px/ms so growing content (images / reveals) doesn't stall the scroll
+    const speed = Math.max(end, 1) / DUR.AUTO_SCROLL;
+    let pos = start;
+    let last = performance.now();
+    const t0 = last;
+    const maxMs = DUR.AUTO_SCROLL * 1.75;
 
-    function easeLinear(t) {
-      return t; // even pace so every section stays readable
+    function finish() {
+      autoScrollRaf = null;
+      root.scrollTop = Math.max(0, root.scrollHeight - root.clientHeight);
+      root.style.scrollBehavior = prevBehavior || "";
+      document.body.classList.remove("is-auto-scrolling");
+      unbindInteractAbort();
     }
 
     function tick(now) {
       if (autoScrollCancelled || aborted) {
         root.style.scrollBehavior = prevBehavior || "";
+        document.body.classList.remove("is-auto-scrolling");
         unbindInteractAbort();
         return;
       }
 
-      const liveEnd = Math.max(end, root.scrollHeight - root.clientHeight);
-      const t = Math.min(1, (now - t0) / duration);
-      root.scrollTop = start + (liveEnd - start) * easeLinear(t);
+      // Cap dt so a backgrounded tab doesn't jump a huge distance
+      const dt = Math.min(40, Math.max(0, now - last));
+      last = now;
 
-      if (t < 1) {
+      const liveEnd = Math.max(0, root.scrollHeight - root.clientHeight);
+      pos = Math.min(liveEnd, pos + speed * dt);
+      root.scrollTop = pos;
+
+      if (pos < liveEnd - 1.5 && now - t0 < maxMs) {
         autoScrollRaf = requestAnimationFrame(tick);
+      } else if (pos < liveEnd - 1.5) {
+        // Safety: snap to bottom if we ran long
+        finish();
       } else {
-        autoScrollRaf = null;
-        root.scrollTop = liveEnd;
-        root.style.scrollBehavior = prevBehavior || "";
-        unbindInteractAbort();
+        finish();
       }
     }
 
