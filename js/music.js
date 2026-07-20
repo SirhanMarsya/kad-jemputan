@@ -19,6 +19,7 @@
   let wantSound = false;
   let unlocked = false;
   let hasSeekedStart = false;
+  let pausedByVisibility = false;
 
   function seekToConfiguredStart() {
     if (!audio || hasSeekedStart || MUSIC_START_SECONDS <= 0) return;
@@ -91,6 +92,7 @@
 
   function pauseAll() {
     wantSound = false;
+    pausedByVisibility = false;
     if (audio) audio.pause();
     if (ytPlayer && ytReady) {
       try {
@@ -100,6 +102,55 @@
       }
     }
     setPlayingState(false);
+  }
+
+  /** Pause when tab/app is hidden — keep wantSound so we can resume */
+  function pauseForVisibility() {
+    const mp3Playing = Boolean(audio && !audio.paused);
+    let ytPlaying = false;
+    if (ytPlayer && ytReady && global.YT) {
+      try {
+        ytPlaying =
+          ytPlayer.getPlayerState() === global.YT.PlayerState.PLAYING;
+      } catch (_) {
+        /* ignore */
+      }
+    }
+
+    if (!wantSound && !isPlaying && !mp3Playing && !ytPlaying) return;
+
+    pausedByVisibility = wantSound;
+    if (audio) audio.pause();
+    if (ytPlayer && ytReady) {
+      try {
+        ytPlayer.pauseVideo();
+      } catch (_) {
+        /* ignore */
+      }
+    }
+    setPlayingState(false);
+  }
+
+  function resumeFromVisibility() {
+    if (!pausedByVisibility || !wantSound) {
+      pausedByVisibility = false;
+      return;
+    }
+    pausedByVisibility = false;
+    if (YOUTUBE_VIDEO_ID && playYt(true)) return;
+    playMp3().catch(() => {
+      /* user can retry via FAB */
+    });
+  }
+
+  function bindVisibilityPause() {
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) pauseForVisibility();
+      else resumeFromVisibility();
+    });
+
+    // Extra safety when leaving the page (bfcache / mobile browsers)
+    window.addEventListener("pagehide", pauseForVisibility);
   }
 
   function play() {
@@ -231,6 +282,7 @@
     }
 
     loadYouTubeApi();
+    bindVisibilityPause();
 
     if (toggle) {
       toggle.addEventListener("click", () => {

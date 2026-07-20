@@ -330,7 +330,32 @@
     });
   }
 
+  function initPageLoader() {
+    const el = document.getElementById("pageLoader");
+    if (!el) return;
+
+    let done = false;
+    const hide = () => {
+      if (done) return;
+      done = true;
+      el.classList.add("is-done");
+      el.setAttribute("aria-busy", "false");
+      window.setTimeout(() => {
+        if (el.parentNode) el.remove();
+      }, 500);
+    };
+
+    if (document.readyState === "complete") {
+      hide();
+    } else {
+      window.addEventListener("load", hide, { once: true });
+    }
+    // Fallback so a stuck asset never blocks the invite forever
+    window.setTimeout(hide, 12000);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+    initPageLoader();
     initGuestName();
     initDoor();
     initCountdown();
