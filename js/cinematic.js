@@ -113,8 +113,15 @@
     }
 
     const scrollRoot = getScrollRoot();
-    scrollRoot.style.overflow = "";
-    scrollRoot.style.overflowY = "";
+    // Explicit restore — clearing inline overflow can leave iOS Safari stuck
+    scrollRoot.style.removeProperty("overflow");
+    scrollRoot.style.overflowY = "auto";
+    scrollRoot.style.overflowX = "hidden";
+
+    // Ensure invitation sections are visible (iOS IO can miss them)
+    document.querySelectorAll(".reveal:not(.is-shown)").forEach((el) => {
+      el.classList.add("is-shown");
+    });
   }
 
   // ----- Interrupt: user interaction stops cinematic -----

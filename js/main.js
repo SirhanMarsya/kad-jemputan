@@ -71,6 +71,7 @@
     }
 
     document.body.classList.add("has-opened");
+    document.dispatchEvent(new CustomEvent("wedding:opened"));
 
     // Cinematic sequence starts only after doors finish opening
     if (window.WeddingCinematic) {
@@ -257,29 +258,58 @@
 
   function initReveal() {
     const nodes = document.querySelectorAll(".reveal");
+    if (!nodes.length) return;
+
+    const show = (el) => el.classList.add("is-shown");
+
+    // iOS Safari IntersectionObserver + overflow root is unreliable —
+    // sections can stay opacity:0 ("content missing"). Show with a safe fallback.
+    const showAll = () => nodes.forEach(show);
+
     if (!("IntersectionObserver" in window)) {
-      nodes.forEach((n) => n.classList.add("is-shown"));
+      showAll();
       return;
     }
 
     const scrollRoot = getScrollRoot();
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-shown");
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        root: scrollRoot === document.documentElement ? null : scrollRoot,
-        threshold: 0.12,
-        rootMargin: "0px 0px -40px 0px",
-      }
-    );
+    let io;
+    try {
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              show(entry.target);
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          root: scrollRoot === document.documentElement ? null : scrollRoot,
+          threshold: 0.01,
+          rootMargin: "80px 0px 80px 0px",
+        }
+      );
+      nodes.forEach((n) => io.observe(n));
+    } catch (_) {
+      showAll();
+      return;
+    }
 
-    nodes.forEach((n) => io.observe(n));
+    // Fallback: if IO never fires (common on iOS), reveal everything
+    window.setTimeout(() => {
+      nodes.forEach((n) => {
+        if (!n.classList.contains("is-shown")) show(n);
+      });
+    }, 2500);
+
+    // After doors open / first scroll, force any still-hidden reveals
+    document.addEventListener(
+      "wedding:opened",
+      () => {
+        window.setTimeout(showAll, 400);
+      },
+      { once: true }
+    );
   }
 
   function initCoupleReveal() {

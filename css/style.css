@@ -576,7 +576,6 @@ a {
 
 .pelamin {
   position: relative;
-  min-height: 100cqh;
   min-height: 100%;
   overflow: hidden;
   display: flex;
@@ -613,8 +612,7 @@ a {
     transform 1.05s cubic-bezier(0.22, 1, 0.36, 1),
     transform-origin 1.05s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 2s cubic-bezier(0.33, 0, 0.2, 1);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
+  /* Avoid will-change / backface-visibility — iOS Safari blanks layers under memory pressure */
 }
 
 .pelamin__bg-img--empty {
