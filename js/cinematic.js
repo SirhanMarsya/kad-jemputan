@@ -18,10 +18,10 @@
     COUPLE_IN: 2200, // match CSS crossfade (~2.2s)
     COUPLE_HOLD: 1200,
     ZOOM: 1050, // matches CSS transform transition
-    DETAILS_FADE: 900, // mist fade-in after zoom
-    GROOM_HOLD: 2200,
-    BRIDE_HOLD: 2200,
-    RETURN_HOLD: 450,
+    DETAILS_FADE: 1000, // mist fade-in after zoom
+    GROOM_HOLD: 2400,
+    BRIDE_HOLD: 2400,
+    RETURN_HOLD: 500,
     AUTO_SCROLL: 55000, // slow enough to read each section
     INTERACT_GRACE: 400, // ignore leftover door-tap events
   };
