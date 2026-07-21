@@ -1,10 +1,73 @@
 /* ============================================
-   Apple-only overrides (iPhone / iPad)
-   Loaded only when JS detects iOS / iPadOS.
-   Add device-specific tweaks here; desktop is unchanged.
+   Apple-only overrides (iPhone / iPad / iPadOS)
+   Loaded only when JS detects iOS.
    ============================================ */
 
-/* Cheaper glass effects — backdrop-filter is costly during scroll/zoom */
+/* ----- Text / zoom ----- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* iOS zooms focused inputs under 16px — keep form fields at 16px+ */
+.form__field input,
+.form__field textarea,
+.music-fab__panel input[type="range"] {
+  font-size: 16px;
+}
+
+/* ----- Safe area (notch / home indicator) ----- */
+/* constant() = iOS 11.0–11.2; env() = iOS 11.2+ */
+.card-frame {
+  padding-left: constant(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.bottom-nav {
+  padding-bottom: calc(0.4rem + constant(safe-area-inset-bottom));
+  padding-bottom: calc(0.4rem + env(safe-area-inset-bottom));
+}
+
+.music-fab {
+  bottom: calc(4.25rem + constant(safe-area-inset-bottom));
+  bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  right: calc(1rem + constant(safe-area-inset-right));
+  right: calc(1rem + env(safe-area-inset-right));
+}
+
+body.nav-hidden .music-fab {
+  bottom: calc(2.5rem + constant(safe-area-inset-bottom));
+  bottom: calc(2.5rem + env(safe-area-inset-bottom));
+}
+
+.bottom-nav__show {
+  bottom: calc(0.35rem + constant(safe-area-inset-bottom));
+  bottom: calc(0.35rem + env(safe-area-inset-bottom));
+}
+
+/* ----- Touch / scroll ----- */
+.card-frame__scroll {
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  /* flex child that scrolls — older iOS needs this */
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+button,
+a,
+.bottom-nav__item,
+.music-fab__btn,
+.radio,
+.figure {
+  touch-action: manipulation;
+}
+
+/* ----- Cheaper glass (backdrop-filter is costly on iOS) ----- */
 .info-card,
 .countdown__item,
 .bottom-nav,
@@ -16,10 +79,17 @@
 
 .info-card {
   background: rgba(255, 255, 255, 0.96);
+  background-clip: padding-box;
 }
 
 .countdown__item {
   background: rgba(255, 255, 255, 0.82);
+  background-clip: padding-box;
+}
+
+.bottom-nav {
+  background: rgba(200, 232, 248, 0.96);
+  background-clip: padding-box;
 }
 
 /* Soften continuous float on parent-detail panels */
@@ -39,10 +109,9 @@
   .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
     transform: scale(1.85) translate3d(-16%, 5%, 0);
   }
-}
 
-/* Prefer native scrolling feel; avoid fighting Safari momentum */
-.card-frame__scroll {
-  scroll-behavior: auto;
-  -webkit-overflow-scrolling: touch;
+  .music-fab {
+    bottom: calc(4.5rem + constant(safe-area-inset-bottom));
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
 }
