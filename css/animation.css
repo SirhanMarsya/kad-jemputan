@@ -126,6 +126,14 @@ body.is-auto-scrolling .petal--burst {
   opacity: 0;
 }
 
+/* backdrop-filter is very expensive on iOS during scroll — drop it while
+   the cinematic auto-scroll runs to keep the motion smooth */
+body.is-auto-scrolling .info-card,
+body.is-auto-scrolling .countdown__item {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 .petal {
   position: absolute;
   top: -8%;

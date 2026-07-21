@@ -604,11 +604,11 @@ a {
   display: block;
   transform: scale(1) translate3d(0, 0, 0);
   transform-origin: center 45%;
+  /* Animate only transform/opacity. Animating transform-origin recalculates
+     every frame and causes visible jank on iOS — let it snap instead. */
   transition:
     transform 1.05s cubic-bezier(0.22, 1, 0.36, 1),
-    transform-origin 1.05s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 2s cubic-bezier(0.33, 0, 0.2, 1);
-  /* Avoid will-change / backface-visibility — iOS Safari blanks layers under memory pressure */
 }
 
 .pelamin__bg-img--empty {
@@ -617,7 +617,6 @@ a {
   /* Fade out slightly after the couple starts appearing (crossfade) */
   transition:
     transform 1.05s cubic-bezier(0.22, 1, 0.36, 1),
-    transform-origin 1.05s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 1.8s cubic-bezier(0.33, 0, 0.2, 1) 0.35s;
 }
 
@@ -628,7 +627,6 @@ a {
   transform: scale(1.02) translate3d(0, 0, 0);
   transition:
     transform 2.2s cubic-bezier(0.22, 1, 0.36, 1),
-    transform-origin 1.05s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 2.2s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
@@ -639,6 +637,14 @@ a {
 
 .pelamin.is-couple-shown .pelamin__bg-img--empty {
   opacity: 0;
+}
+
+/* Promote the layer only while the cinematic runs — smooths the zoom on iOS
+   without leaving a permanent compositing layer that pressures memory */
+.pelamin.is-cinematic-running .pelamin__bg-img,
+.pelamin.is-focus-groom .pelamin__bg-img,
+.pelamin.is-focus-bride .pelamin__bg-img {
+  will-change: transform;
 }
 
 /* Groom focus: pan so he sits on the right; text space on the left */
