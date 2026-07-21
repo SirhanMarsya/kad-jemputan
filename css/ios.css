@@ -1,0 +1,48 @@
+/* ============================================
+   Apple-only overrides (iPhone / iPad)
+   Loaded only when JS detects iOS / iPadOS.
+   Add device-specific tweaks here; desktop is unchanged.
+   ============================================ */
+
+/* Cheaper glass effects — backdrop-filter is costly during scroll/zoom */
+.info-card,
+.countdown__item,
+.bottom-nav,
+.music-fab__btn,
+.popup__backdrop {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.countdown__item {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+/* Soften continuous float on parent-detail panels */
+.pelamin.is-focus-groom .mist--groom,
+.pelamin.is-focus-bride .mist--bride {
+  animation: none;
+}
+
+/* Slightly lighter zoom scale on phones to reduce GPU load */
+@media (max-width: 720px) {
+  .pelamin.is-focus-groom .pelamin__bg-img,
+  .pelamin.is-focus-groom.is-couple-shown .pelamin__bg-img--couple {
+    transform: scale(1.85) translate3d(16%, 5%, 0);
+  }
+
+  .pelamin.is-focus-bride .pelamin__bg-img,
+  .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
+    transform: scale(1.85) translate3d(-16%, 5%, 0);
+  }
+}
+
+/* Prefer native scrolling feel; avoid fighting Safari momentum */
+.card-frame__scroll {
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+}

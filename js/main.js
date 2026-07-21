@@ -384,6 +384,29 @@
     window.setTimeout(hide, 12000);
   }
 
+  /** True for iPhone, iPod, iPad, and iPadOS (desktop UA). */
+  function isAppleTouchDevice() {
+    const ua = navigator.userAgent || "";
+    return (
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    );
+  }
+
+  /**
+   * Ensure Apple-only stylesheet is present (head script usually loads it first).
+   * Safe to call more than once.
+   */
+  function initIosStyles() {
+    if (!isAppleTouchDevice()) return;
+    document.documentElement.classList.add("is-ios");
+    if (document.querySelector('link[href="css/ios.css"]')) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "css/ios.css";
+    document.head.appendChild(link);
+  }
+
   /**
    * Drive full-screen sizing via a JS variable instead of container queries.
    * `container-type: size` + `cqh` caused iOS Safari to blank scrolled content.
@@ -410,7 +433,11 @@
     });
   }
 
+  // Run ASAP when this file parses (before DOMContentLoaded)
+  initIosStyles();
+
   document.addEventListener("DOMContentLoaded", () => {
+    initIosStyles();
     initAppHeight();
     initPageLoader();
     initGuestName();
