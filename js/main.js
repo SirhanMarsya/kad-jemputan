@@ -384,7 +384,34 @@
     window.setTimeout(hide, 12000);
   }
 
+  /**
+   * Drive full-screen sizing via a JS variable instead of container queries.
+   * `container-type: size` + `cqh` caused iOS Safari to blank scrolled content.
+   */
+  function initAppHeight() {
+    const scroll = document.getElementById("cardScroll");
+    const setH = () => {
+      const h =
+        (scroll && scroll.clientHeight) ||
+        window.innerHeight ||
+        document.documentElement.clientHeight;
+      if (h) {
+        document.documentElement.style.setProperty("--app-h", h + "px");
+      }
+    };
+    setH();
+    // Re-measure after layout settles and on viewport changes
+    requestAnimationFrame(setH);
+    window.addEventListener("load", setH);
+    window.addEventListener("resize", setH);
+    window.addEventListener("orientationchange", () => {
+      setH();
+      window.setTimeout(setH, 300);
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+    initAppHeight();
     initPageLoader();
     initGuestName();
     initDoor();
