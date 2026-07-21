@@ -1,12 +1,22 @@
 /* ============================================
    Apple-only overrides (iPhone / iPad / iPadOS)
    Loaded only when JS detects iOS.
+   Includes -webkit- prefixes Safari expects.
    ============================================ */
 
-/* ----- Text / zoom ----- */
+/* ----- Text / zoom / rendering ----- */
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
   -webkit-font-smoothing: antialiased;
 }
 
@@ -15,6 +25,19 @@ html {
 .form__field textarea,
 .music-fab__panel input[type="range"] {
   font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: var(--radius, 2px);
+}
+
+.form__field input[type="number"] {
+  -webkit-appearance: none;
+  appearance: textfield;
+}
+
+.radio input {
+  -webkit-appearance: radio;
+  appearance: radio;
 }
 
 /* ----- Safe area (notch / home indicator) ----- */
@@ -53,7 +76,6 @@ body.nav-hidden .music-fab {
   scroll-behavior: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
-  /* flex child that scrolls — older iOS needs this */
   min-height: 0;
   flex: 1 1 auto;
 }
@@ -65,48 +87,95 @@ a,
 .radio,
 .figure {
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* ----- Cheaper glass (backdrop-filter is costly on iOS) ----- */
+.form__field input,
+.form__field textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+img,
+.mist__img,
+.pelamin__bg-img {
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ----- Sticky (Safari) ----- */
+.main--story::before {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+/* ----- Cheaper glass + -webkit-backdrop-filter ----- */
 .info-card,
 .countdown__item,
 .bottom-nav,
 .music-fab__btn,
-.popup__backdrop {
-  backdrop-filter: none !important;
+.popup__backdrop,
+.glass-doors__pane {
   -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 
 .info-card {
   background: rgba(255, 255, 255, 0.96);
+  -webkit-background-clip: padding-box;
   background-clip: padding-box;
 }
 
 .countdown__item {
   background: rgba(255, 255, 255, 0.82);
+  -webkit-background-clip: padding-box;
   background-clip: padding-box;
 }
 
 .bottom-nav {
   background: rgba(200, 232, 248, 0.96);
+  -webkit-background-clip: padding-box;
   background-clip: padding-box;
+}
+
+.glass-doors__pane {
+  background: rgba(200, 230, 250, 0.72);
 }
 
 /* Soften continuous float on parent-detail panels */
 .pelamin.is-focus-groom .mist--groom,
 .pelamin.is-focus-bride .mist--bride {
+  -webkit-animation: none;
   animation: none;
+}
+
+/* Transforms with -webkit- for older Safari */
+.pelamin__bg-img,
+.pelamin__intro,
+.mist,
+.cinematic-title,
+.bottom-nav,
+.page-loader {
+  -webkit-transform: translateZ(0);
 }
 
 /* Slightly lighter zoom scale on phones to reduce GPU load */
 @media (max-width: 720px) {
   .pelamin.is-focus-groom .pelamin__bg-img,
   .pelamin.is-focus-groom.is-couple-shown .pelamin__bg-img--couple {
+    -webkit-transform: scale(1.85) translate3d(16%, 5%, 0);
     transform: scale(1.85) translate3d(16%, 5%, 0);
   }
 
   .pelamin.is-focus-bride .pelamin__bg-img,
   .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
+    -webkit-transform: scale(1.85) translate3d(-16%, 5%, 0);
     transform: scale(1.85) translate3d(-16%, 5%, 0);
   }
 
@@ -114,4 +183,10 @@ a,
     bottom: calc(4.5rem + constant(safe-area-inset-bottom));
     bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
+}
+
+/* Loader mask (Safari) */
+.loader {
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
 }

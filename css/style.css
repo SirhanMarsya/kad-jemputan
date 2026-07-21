@@ -944,8 +944,10 @@ a {
   height: auto;
   object-fit: contain;
   pointer-events: none;
+  -webkit-user-select: none;
   user-select: none;
   -webkit-user-drag: none;
+  -webkit-filter: drop-shadow(0 10px 22px rgba(30, 74, 110, 0.18));
   filter: drop-shadow(0 10px 22px rgba(30, 74, 110, 0.18));
 }
 
@@ -1229,6 +1231,7 @@ a {
   padding: 1.35rem 0.5rem;
   border: 1px solid rgba(74, 159, 212, 0.45);
   background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
 
@@ -1440,6 +1443,7 @@ a {
   position: absolute;
   inset: 0;
   background: rgba(30, 74, 110, 0.45);
+  -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
 
@@ -1918,6 +1922,7 @@ body.nav-hidden .music-fab {
 
 .bottom-nav__item {
   flex: 1;
+  -webkit-appearance: none;
   appearance: none;
   border: 0;
   background: transparent;
