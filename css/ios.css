@@ -2,9 +2,10 @@
    Apple compatibility (iPhone / iPad / iPadOS)
    Loaded only when JS detects iOS.
 
-   Keep visual and cinematic rules in the shared stylesheets so Apple
-   devices receive the same experience. This file contains only Safari
-   compatibility and safe-area fixes.
+   Two jobs:
+   1) Safari prefixes / safe-area / touch
+   2) Performance overrides that stop compositor blanking
+      (backdrop-filter + sticky large bitmaps + heavy zoom)
    ============================================ */
 
 /* ----- Text / zoom / rendering ----- */
@@ -60,12 +61,21 @@ body.nav-hidden .music-fab {
   bottom: calc(0.35rem + env(safe-area-inset-bottom));
 }
 
+@media (max-width: 720px) {
+  .music-fab {
+    bottom: calc(4.5rem + constant(safe-area-inset-bottom));
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
+}
+
 /* ----- Touch / scroll ----- */
 .card-frame__scroll {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   min-height: 0;
   flex: 1 1 auto;
+  /* Smooth scroll fights Safari momentum and contributes to blanking */
+  scroll-behavior: auto;
 }
 
 button,
@@ -97,29 +107,101 @@ img,
   -webkit-touch-callout: none;
 }
 
-/* ----- Sticky (Safari) ----- */
-.main--story::before {
-  position: -webkit-sticky;
-  position: sticky;
+/* ----- CRITICAL: stop scrolled-content blanking ----- */
+/*
+  Sticky full-viewport bitmap + overflow scroll is a known iOS Safari
+  compositor bug: layers get purged mid-scroll and sections go white.
+  Paint the floral backdrop on the container instead.
+*/
+.main--story {
+  background-image: url("../assets/illustrations/background.png");
+  background-position: center top;
+  background-size: 100% auto;
+  background-repeat: repeat-y;
 }
 
-/* Safe-area adjustment only; shared responsive.css controls the visuals. */
+.main--story::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* backdrop-filter is extremely expensive on iOS and triggers blanking
+   while scrolling / zooming. Keep solid frosted colors instead. */
+.glass-doors__pane,
+.info-card,
+.countdown__item,
+.bottom-nav,
+.music-fab__btn,
+.popup__backdrop,
+.mist,
+.contact-card {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.glass-doors__pane {
+  /* Slightly more opaque so glass still reads without live blur */
+  background: linear-gradient(
+    165deg,
+    rgba(210, 235, 250, 0.92) 0%,
+    rgba(150, 200, 235, 0.88) 55%,
+    rgba(180, 220, 245, 0.9) 100%
+  );
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.countdown__item {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.bottom-nav {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+/* Soften continuous mist float — less GPU churn during zoom */
+.pelamin.is-focus-groom .mist--groom,
+.pelamin.is-focus-bride .mist--bride {
+  animation: none;
+}
+
+/* Lighter zoom on phones — scale(2) + large PNG often blanks mid-animation */
 @media (max-width: 720px) {
-  .music-fab {
-    bottom: calc(4.5rem + constant(safe-area-inset-bottom));
-    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  .pelamin.is-focus-groom .pelamin__bg-img,
+  .pelamin.is-focus-groom.is-couple-shown .pelamin__bg-img--couple {
+    -webkit-transform: scale(1.7) translate3d(14%, -2%, 0);
+    transform: scale(1.7) translate3d(14%, -2%, 0);
+  }
+
+  .pelamin.is-focus-bride .pelamin__bg-img,
+  .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
+    -webkit-transform: scale(1.7) translate3d(-14%, -2%, 0);
+    transform: scale(1.7) translate3d(-14%, -2%, 0);
   }
 }
 
-/* ----- Glass doors (Safari prefixes — same motion as shared CSS) ----- */
+/* Don't keep permanent compositing layers after cinematic */
+.pelamin.is-cinematic-running .pelamin__bg-img,
+.pelamin.is-focus-groom .pelamin__bg-img,
+.pelamin.is-focus-bride .pelamin__bg-img {
+  will-change: auto;
+}
+
+/* Petals during auto-scroll add more layer pressure — pause them */
+body.is-auto-scrolling .petal,
+body.is-auto-scrolling .petal-rain {
+  animation-play-state: paused !important;
+}
+
+/* ----- Glass doors (Safari prefixes — keep motion) ----- */
 .glass-doors {
   -webkit-perspective: 1400px;
   perspective: 1400px;
 }
 
 .glass-doors__pane {
-  -webkit-backdrop-filter: blur(18px) saturate(1.35);
-  backdrop-filter: blur(18px) saturate(1.35);
   -webkit-transition:
     -webkit-transform 1.85s cubic-bezier(0.65, 0, 0.35, 1),
     filter 0.35s ease;
@@ -151,4 +233,12 @@ img,
 .landing {
   -webkit-transition: opacity 0.9s ease, visibility 0.9s ease;
   transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+
+/* Ensure scroll-reveal content is never left invisible if IO fails */
+html.is-ios .reveal.is-shown,
+html.is-ios body.has-opened .reveal {
+  opacity: 1;
+  -webkit-transform: none;
+  transform: none;
 }

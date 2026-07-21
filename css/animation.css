@@ -306,21 +306,27 @@ body.is-auto-scrolling .countdown__item {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  /* Soften continuous / decorative motion only.
+     Do NOT zero-out every transition — that kills the door open and
+     cinematic sequence on iOS when Reduce Motion / Low Power Mode is on. */
+  .petal,
+  .petal-rain,
+  .petal--burst,
+  .sparkle,
+  .bulb,
+  .curtain--left,
+  .curtain--right {
+    animation: none !important;
+  }
+
+  .petal-rain {
+    display: none;
   }
 
   .reveal {
     opacity: 1;
     transform: none;
-  }
-
-  .petal-rain {
-    display: none;
+    transition: none;
   }
 
   html {

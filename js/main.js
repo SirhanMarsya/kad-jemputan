@@ -265,10 +265,26 @@
     // iOS Safari IntersectionObserver + overflow root is unreliable —
     // sections can stay opacity:0 ("content missing"). Show with a safe fallback.
     const showAll = () => nodes.forEach(show);
+    const onIos = isAppleTouchDevice();
 
-    if (!("IntersectionObserver" in window)) {
-      showAll();
-      return;
+    // On Apple devices, skip IO entirely — force content visible.
+    // Blanking/"missing sections" is almost always opacity:0 reveals that never fire.
+    if (onIos || !("IntersectionObserver" in window)) {
+      document.addEventListener(
+        "wedding:opened",
+        () => {
+          showAll();
+          window.setTimeout(showAll, 200);
+        },
+        { once: true }
+      );
+      // Also reveal after a short delay in case doors were already open
+      window.setTimeout(showAll, onIos ? 800 : 0);
+      if (onIos) return;
+      if (!("IntersectionObserver" in window)) {
+        showAll();
+        return;
+      }
     }
 
     const scrollRoot = getScrollRoot();
@@ -295,7 +311,7 @@
       return;
     }
 
-    // Fallback: if IO never fires (common on iOS), reveal everything
+    // Fallback: if IO never fires, reveal everything
     window.setTimeout(() => {
       nodes.forEach((n) => {
         if (!n.classList.contains("is-shown")) show(n);

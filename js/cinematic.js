@@ -7,6 +7,14 @@
 (function (global) {
   "use strict";
 
+  function isAppleTouchDevice() {
+    const ua = navigator.userAgent || "";
+    return (
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    );
+  }
+
   // ----- Duration constants (ms) -----
   const DUR = {
     DOOR_OPEN: 1850, // matches .glass-doors__pane transition (1.85s)
@@ -23,7 +31,8 @@
     BRIDE_HOLD: 2400,
     RETURN_HOLD: 500,
     AUTO_SCROLL: 55000, // slow enough to read each section
-    INTERACT_GRACE: 400, // ignore leftover door-tap events
+    // iOS often synthesizes leftover pointer/touch after the door tap
+    INTERACT_GRACE: isAppleTouchDevice() ? 1200 : 400,
   };
 
   let running = false;
@@ -157,6 +166,9 @@
     if (!running && !autoScrollRaf) return;
     // Ignore while auto-scrolling (touch handlers cover mobile; mouse uses wheel)
     if (autoScrollRaf && !running && e.pointerType === "touch") return;
+    // On iOS, pointerdown often fires with the same door-open gesture /
+    // music-unmute tap and would abort the cinematic instantly
+    if (isAppleTouchDevice() && e.pointerType === "touch") return;
     onUserInteract();
   }
 
