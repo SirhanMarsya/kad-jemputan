@@ -111,8 +111,44 @@ img,
   }
 }
 
-/* Loader mask (Safari) */
-.loader {
-  -webkit-mask-composite: source-out;
-  mask-composite: subtract;
+/* ----- Glass doors (Safari prefixes — same motion as shared CSS) ----- */
+.glass-doors {
+  -webkit-perspective: 1400px;
+  perspective: 1400px;
+}
+
+.glass-doors__pane {
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-transition:
+    -webkit-transform 1.85s cubic-bezier(0.65, 0, 0.35, 1),
+    filter 0.35s ease;
+  transition:
+    transform 1.85s cubic-bezier(0.65, 0, 0.35, 1),
+    filter 0.35s ease;
+}
+
+.glass-doors__pane--left {
+  -webkit-transform-origin: left center;
+  transform-origin: left center;
+}
+
+.glass-doors__pane--right {
+  -webkit-transform-origin: right center;
+  transform-origin: right center;
+}
+
+.glass-doors.is-opening .glass-doors__pane--left {
+  -webkit-transform: translateX(-102%);
+  transform: translateX(-102%);
+}
+
+.glass-doors.is-opening .glass-doors__pane--right {
+  -webkit-transform: translateX(102%);
+  transform: translateX(102%);
+}
+
+.landing {
+  -webkit-transition: opacity 0.9s ease, visibility 0.9s ease;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
 }
