@@ -107,32 +107,21 @@ img,
   -webkit-touch-callout: none;
 }
 
-/* ----- Floral backdrop: static, not tiled ----- */
+/* ----- CRITICAL: stop scrolled-content blanking ----- */
 /*
-  Previously used background-repeat: repeat-y to avoid sticky blanking.
-  That made the floral frame tile while scrolling. Prefer the same sticky
-  single-frame approach as desktop (images are now smaller / --app-h fixed).
+  Sticky full-viewport bitmap + overflow scroll blanks content on iOS Safari.
+  Paint the floral backdrop on the container instead (may tile on long scroll).
 */
 .main--story {
-  background-image: none;
-  background-color: #eef6fc;
+  background-image: url("../assets/illustrations/background.png");
+  background-position: center top;
+  background-size: 100% auto;
+  background-repeat: repeat-y;
 }
 
 .main--story::before {
-  content: "" !important;
-  display: block !important;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: var(--app-h, 100%);
-  margin-bottom: calc(-1 * var(--app-h, 100%));
-  background: url("../assets/illustrations/background.png") center / cover no-repeat;
-  pointer-events: none;
-  z-index: 0;
-  /* Keep this layer simple — no will-change / filters (blanking risk) */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+  content: none !important;
+  display: none !important;
 }
 
 /* backdrop-filter is extremely expensive on iOS and triggers blanking
