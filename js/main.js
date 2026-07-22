@@ -76,21 +76,10 @@
     // Cinematic sequence starts only after doors finish opening
     if (window.WeddingCinematic) {
       WeddingCinematic.startAfterDoorsOpen();
+    } else {
+      // No cinematic module — show nav after doors open
+      showBottomNav();
     }
-
-    const bottomNav = document.getElementById("bottomNav");
-    // Wait for doors to mostly finish, then ease the nav in
-    setTimeout(() => {
-      if (bottomNav) {
-        bottomNav.hidden = false;
-        bottomNav.setAttribute("aria-hidden", "false");
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            bottomNav.classList.add("is-shown");
-          });
-        });
-      }
-    }, 1500);
 
     setTimeout(() => {
       if (landing) landing.classList.add("is-hidden");
@@ -98,6 +87,19 @@
         if (landing) landing.style.display = "none";
       }, 900);
     }, 1700);
+  }
+
+  /** Reveal bottom nav once (after cinematic ends or is aborted). */
+  function showBottomNav() {
+    const bottomNav = document.getElementById("bottomNav");
+    if (!bottomNav || bottomNav.classList.contains("is-shown")) return;
+    bottomNav.hidden = false;
+    bottomNav.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bottomNav.classList.add("is-shown");
+      });
+    });
   }
 
   function getScrollRoot() {
@@ -463,6 +465,9 @@
     initCoupleReveal();
     initBottomNav();
     initContactPopup();
+
+    // Nav stays hidden during cinematic; appear when it ends or is aborted
+    document.addEventListener("wedding:cinematic-settled", showBottomNav);
 
     if (window.WeddingMusic) WeddingMusic.init();
     if (window.WeddingCalendar) WeddingCalendar.init();

@@ -131,6 +131,9 @@
     document.querySelectorAll(".reveal:not(.is-shown)").forEach((el) => {
       el.classList.add("is-shown");
     });
+
+    // Show bottom nav when cinematic finishes or is interrupted
+    document.dispatchEvent(new CustomEvent("wedding:cinematic-settled"));
   }
 
   // ----- Interrupt: user interaction stops cinematic -----

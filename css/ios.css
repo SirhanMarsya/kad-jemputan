@@ -107,22 +107,32 @@ img,
   -webkit-touch-callout: none;
 }
 
-/* ----- CRITICAL: stop scrolled-content blanking ----- */
+/* ----- Floral backdrop: static, not tiled ----- */
 /*
-  Sticky full-viewport bitmap + overflow scroll is a known iOS Safari
-  compositor bug: layers get purged mid-scroll and sections go white.
-  Paint the floral backdrop on the container instead.
+  Previously used background-repeat: repeat-y to avoid sticky blanking.
+  That made the floral frame tile while scrolling. Prefer the same sticky
+  single-frame approach as desktop (images are now smaller / --app-h fixed).
 */
 .main--story {
-  background-image: url("../assets/illustrations/background.png");
-  background-position: center top;
-  background-size: 100% auto;
-  background-repeat: repeat-y;
+  background-image: none;
+  background-color: #eef6fc;
 }
 
 .main--story::before {
-  content: none !important;
-  display: none !important;
+  content: "" !important;
+  display: block !important;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: var(--app-h, 100%);
+  margin-bottom: calc(-1 * var(--app-h, 100%));
+  background: url("../assets/illustrations/background.png") center / cover no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  /* Keep this layer simple — no will-change / filters (blanking risk) */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* backdrop-filter is extremely expensive on iOS and triggers blanking
@@ -140,12 +150,15 @@ img,
 }
 
 .glass-doors__pane {
-  /* Slightly more opaque so glass still reads without live blur */
+  /* Keep glass light so pelamin shows through (no live blur on iOS) */
   background: linear-gradient(
     165deg,
     rgba(210, 235, 250, 0.92) 0%,
     rgba(150, 200, 235, 0.88) 55%,
     rgba(180, 220, 245, 0.9) 100%
+    /* rgba(210, 235, 250, 0.42) 0%,
+    rgba(150, 200, 235, 0.32) 55%,
+    rgba(180, 220, 245, 0.38) 100% */
   );
 }
 
@@ -171,14 +184,19 @@ img,
 @media (max-width: 720px) {
   .pelamin.is-focus-groom .pelamin__bg-img,
   .pelamin.is-focus-groom.is-couple-shown .pelamin__bg-img--couple {
-    -webkit-transform: scale(1.7) translate3d(14%, -2%, 0);
-    transform: scale(1.7) translate3d(14%, -2%, 0);
+    /* -webkit-transform: scale(1.7) translate3d(14%, -2%, 0);
+    transform: scale(1.7) translate3d(14%, -2%, 0); */
+    -webkit-transform: scale(2) translate3d(20%, -2%, 0);
+    transform: scale(2) translate3d(20%, -2%, 0);;
+
   }
 
   .pelamin.is-focus-bride .pelamin__bg-img,
   .pelamin.is-focus-bride.is-couple-shown .pelamin__bg-img--couple {
-    -webkit-transform: scale(1.7) translate3d(-14%, -2%, 0);
-    transform: scale(1.7) translate3d(-14%, -2%, 0);
+    /* -webkit-transform: scale(1.7) translate3d(-14%, -2%, 0);
+    transform: scale(1.7) translate3d(-14%, -2%, 0); */
+    -webkit-transform: scale(2) translate3d(-20%, -2%, 0);
+    transform: scale(2) translate3d(-20%, -2%, 0);
   }
 }
 

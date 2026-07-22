@@ -22,5 +22,5 @@ window.WEDDING_CONFIG = {
    * Start the MP3 at this time when doors open (seconds).
    * Examples: 0 = beginning, 90 = 1:30, 125 = 2:05
    */
-  musicStartSeconds: 80, // 1:20
+  musicStartSeconds: 57, // 1:20
 };
