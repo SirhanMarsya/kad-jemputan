@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/animation.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/video-player.css" />
   <!-- Load Apple-only CSS as early as possible (iPhone / iPad / iPadOS) -->
   <script>
     (function () {
@@ -620,25 +621,109 @@
     </div>
   </div>
 
-  <div class="music-fab" id="musicFab" hidden>
-    <button type="button" class="music-fab__btn" id="musicToggle" aria-label="Toggle music" aria-pressed="false">
-      <span class="music-fab__icon" id="musicIcon">♪</span>
+  <div class="vp" id="musicFab" hidden>
+    <button
+      type="button"
+      class="vp__launcher"
+      id="musicToggle"
+      aria-label="Open music player"
+      aria-expanded="false"
+      aria-controls="musicPanel"
+    >
+      <span class="vp__launcher-icon" id="musicIcon" aria-hidden="true">♪</span>
     </button>
-    <div class="music-fab__panel" id="musicPanel" hidden>
-      <button type="button" id="musicPlay">Play</button>
-      <button type="button" id="musicPause">Pause</button>
-      <label class="music-fab__vol">
-        Volume
-        <input type="range" id="musicVolume" min="0" max="100" value="60" />
-      </label>
-      <p class="music-fab__playlist">Nuca — Masa ini, Nanti, dan Masa Indah Lainnya</p>
+
+    <div
+      class="vp__card"
+      id="musicPanel"
+      hidden
+      role="dialog"
+      aria-label="Music video player"
+    >
+      <div class="vp__shine" aria-hidden="true"></div>
+      <div class="vp__glare" id="vpGlare" aria-hidden="true"></div>
+
+      <video
+        class="vp__video"
+        id="bgMusic"
+        playsinline
+        webkit-playsinline
+        loop
+        preload="metadata"
+        muted
+        disablepictureinpicture
+        controlslist="nodownload nofullscreen noremoteplayback"
+      >
+        <source src="assets/nuca-lyric.mp4" type="video/mp4" />
+      </video>
+
+      <div class="vp__controls">
+        <button
+          type="button"
+          class="vp__play"
+          id="vpPlay"
+          aria-label="Play"
+        >
+          <svg class="vp__icon vp__icon--play" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5v14l11-7z" fill="currentColor" />
+          </svg>
+          <svg class="vp__icon vp__icon--pause" viewBox="0 0 24 24" aria-hidden="true" hidden>
+            <path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor" />
+          </svg>
+        </button>
+
+        <div class="vp__progress-wrap">
+          <input
+            class="vp__progress"
+            id="vpProgress"
+            type="range"
+            min="0"
+            max="1000"
+            value="0"
+            step="1"
+            aria-label="Seek"
+          />
+          <div class="vp__progress-fill" id="vpProgressFill" aria-hidden="true"></div>
+        </div>
+
+        <span class="vp__time" id="vpTime" aria-live="off">00:00 / 00:00</span>
+
+        <div class="vp__volume">
+          <button
+            type="button"
+            class="vp__mute"
+            id="vpMute"
+            aria-label="Mute"
+          >
+            <svg class="vp__icon vp__icon--speaker" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4 9v6h4l5 4V5L8 9H4zm13.5 3a4.5 4.5 0 0 0-2.3-3.9v7.8A4.5 4.5 0 0 0 17.5 12zm0-8.5v2.1a7 7 0 0 1 0 12.8v2.1a9 9 0 0 0 0-17z"
+                fill="currentColor"
+              />
+            </svg>
+            <svg class="vp__icon vp__icon--muted" viewBox="0 0 24 24" aria-hidden="true" hidden>
+              <path
+                d="M4 9v6h4l5 4V5L8 9H4zm12.5 3l2.1-2.1 1.4 1.4L18 13.4l2 2 1.4-1.4-2-2 2-2-1.4-1.4-2 2-2.1-2.1-1.4 1.4L15.1 12l-2.1 2.1 1.4 1.4z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+          <input
+            class="vp__volume-slider"
+            id="musicVolume"
+            type="range"
+            min="0"
+            max="100"
+            value="60"
+            aria-label="Volume"
+          />
+        </div>
+      </div>
+
+      <p class="vp__title">Nuca — Masa ini, Nanti, dan Masa Indah Lainnya</p>
     </div>
   </div>
   </div><!-- /.card-frame -->
-
-  <audio id="bgMusic" loop preload="metadata">
-    <source src="assets/music.mp3" type="audio/mpeg" />
-  </audio>
 
   <div id="ytPlayer" class="yt-host" aria-hidden="true"></div>
 

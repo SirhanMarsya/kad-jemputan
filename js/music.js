@@ -1,134 +1,168 @@
 /**
- * Background music — YouTube (preferred) + optional MP3 fallback.
- * Browsers block unmuted autoplay on load; we:
- * 1) start muted as soon as YouTube is ready
- * 2) unmute + raise volume when the guest opens the invitation (tap)
+ * Glassmorphism video player — replaces the old MP3 music FAB.
+ * Keeps the WeddingMusic API used by main.js (init / unlockAndPlay / play / pause).
  */
 (function (global) {
   "use strict";
 
   const cfg = global.WEDDING_CONFIG || {};
-  const YOUTUBE_VIDEO_ID = cfg.youtubeVideoId || "";
   const MUSIC_START_SECONDS = Math.max(0, Number(cfg.musicStartSeconds) || 0);
 
-  let audio;
-  let ytPlayer = null;
-  let ytReady = false;
+  /** @type {HTMLVideoElement|null} */
+  let video = null;
   let isPlaying = false;
-  let useYoutube = Boolean(YOUTUBE_VIDEO_ID);
   let wantSound = false;
   let unlocked = false;
   let hasSeekedStart = false;
   let pausedByVisibility = false;
+  let rafId = null;
+  let isSeeking = false;
+  let lastVolume = 0.6;
+  let panelOpen = false;
 
-  function seekToConfiguredStart() {
-    if (!audio || hasSeekedStart || MUSIC_START_SECONDS <= 0) return;
-    try {
-      audio.currentTime = MUSIC_START_SECONDS;
-      hasSeekedStart = true;
-    } catch (_) {
-      /* seek when metadata ready */
-      audio.addEventListener(
-        "loadedmetadata",
-        () => {
-          if (!hasSeekedStart) {
-            audio.currentTime = MUSIC_START_SECONDS;
-            hasSeekedStart = true;
-          }
-        },
-        { once: true }
-      );
-    }
+  function $(id) {
+    return document.getElementById(id);
   }
 
   function els() {
     return {
-      fab: document.getElementById("musicFab"),
-      toggle: document.getElementById("musicToggle"),
-      panel: document.getElementById("musicPanel"),
-      play: document.getElementById("musicPlay"),
-      pause: document.getElementById("musicPause"),
-      volume: document.getElementById("musicVolume"),
-      icon: document.getElementById("musicIcon"),
+      root: $("musicFab"),
+      toggle: $("musicToggle"),
+      panel: $("musicPanel"),
+      playBtn: $("vpPlay"),
+      progress: $("vpProgress"),
+      progressFill: $("vpProgressFill"),
+      time: $("vpTime"),
+      volume: $("musicVolume"),
+      mute: $("vpMute"),
+      glare: $("vpGlare"),
+      icon: $("musicIcon"),
     };
   }
 
-  function setPlayingState(playing) {
-    isPlaying = playing;
-    const { toggle } = els();
-    if (!toggle) return;
-    toggle.setAttribute("aria-pressed", playing ? "true" : "false");
-    toggle.classList.toggle("is-playing", playing);
+  function formatTime(sec) {
+    if (!isFinite(sec) || sec < 0) sec = 0;
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
   }
 
-  function playYt(withSound) {
-    if (!ytPlayer || !ytReady) return false;
-    useYoutube = true;
-    try {
-      const { volume } = els();
-      const pct = volume ? Number(volume.value) : 60;
-      if (withSound) {
-        ytPlayer.unMute();
-        ytPlayer.setVolume(pct);
-      } else {
-        ytPlayer.mute();
-      }
-      ytPlayer.playVideo();
-      if (withSound) setPlayingState(true);
-      return true;
-    } catch (_) {
-      return false;
+  function setPlayingUi(playing) {
+    isPlaying = playing;
+    const { playBtn, toggle, icon } = els();
+    if (toggle) {
+      toggle.classList.toggle("is-playing", playing);
+      toggle.setAttribute(
+        "aria-label",
+        panelOpen ? "Close music player" : "Open music player"
+      );
+    }
+    if (icon) icon.textContent = playing ? "♫" : "♪";
+    if (playBtn) {
+      playBtn.classList.toggle("is-playing", playing);
+      playBtn.setAttribute("aria-label", playing ? "Pause" : "Play");
+      const playIcon = playBtn.querySelector(".vp__icon--play");
+      const pauseIcon = playBtn.querySelector(".vp__icon--pause");
+      if (playIcon) playIcon.hidden = playing;
+      if (pauseIcon) pauseIcon.hidden = !playing;
     }
   }
 
-  function playMp3() {
-    if (!audio) return Promise.reject();
+  function updateMuteUi(muted) {
+    const { mute } = els();
+    if (!mute) return;
+    mute.classList.toggle("is-muted", muted);
+    mute.setAttribute("aria-label", muted ? "Unmute" : "Mute");
+    const speaker = mute.querySelector(".vp__icon--speaker");
+    const mutedIcon = mute.querySelector(".vp__icon--muted");
+    if (speaker) speaker.hidden = muted;
+    if (mutedIcon) mutedIcon.hidden = !muted;
+  }
+
+  function seekToConfiguredStart() {
+    if (!video || hasSeekedStart || MUSIC_START_SECONDS <= 0) return;
+    const apply = () => {
+      if (hasSeekedStart || !video) return;
+      try {
+        if (video.duration && MUSIC_START_SECONDS < video.duration) {
+          video.currentTime = MUSIC_START_SECONDS;
+        }
+        hasSeekedStart = true;
+      } catch (_) {
+        /* wait for more data */
+      }
+    };
+    if (video.readyState >= 1) apply();
+    else video.addEventListener("loadedmetadata", apply, { once: true });
+  }
+
+  function syncProgress() {
+    if (!video || isSeeking) return;
+    const { progress, progressFill, time } = els();
+    const dur = video.duration || 0;
+    const cur = video.currentTime || 0;
+    const pct = dur > 0 ? (cur / dur) * 1000 : 0;
+    if (progress) progress.value = String(Math.round(pct));
+    if (progressFill) progressFill.style.width = dur > 0 ? (cur / dur) * 100 + "%" : "0%";
+    if (time) time.textContent = formatTime(cur) + " / " + formatTime(dur);
+  }
+
+  function startProgressLoop() {
+    cancelProgressLoop();
+    const tick = () => {
+      syncProgress();
+      if (video && !video.paused) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function cancelProgressLoop() {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  function playVideo(withSound) {
+    if (!video) return Promise.reject();
     seekToConfiguredStart();
-    return audio.play().then(() => {
-      useYoutube = false;
-      setPlayingState(true);
+
+    if (withSound) {
+      video.muted = false;
+      wantSound = true;
+      const { volume } = els();
+      const pct = volume ? Number(volume.value) : lastVolume * 100;
+      video.volume = Math.max(0, Math.min(1, pct / 100));
+      lastVolume = video.volume || lastVolume;
+      updateMuteUi(false);
+    } else {
+      video.muted = true;
+      updateMuteUi(true);
+    }
+
+    return video.play().then(() => {
+      setPlayingUi(true);
+      startProgressLoop();
     });
   }
 
   function pauseAll() {
     wantSound = false;
     pausedByVisibility = false;
-    if (audio) audio.pause();
-    if (ytPlayer && ytReady) {
-      try {
-        ytPlayer.pauseVideo();
-      } catch (_) {
-        /* ignore */
-      }
-    }
-    setPlayingState(false);
+    if (video) video.pause();
+    setPlayingUi(false);
+    cancelProgressLoop();
+    syncProgress();
   }
 
-  /** Pause when tab/app is hidden — keep wantSound so we can resume */
   function pauseForVisibility() {
-    const mp3Playing = Boolean(audio && !audio.paused);
-    let ytPlaying = false;
-    if (ytPlayer && ytReady && global.YT) {
-      try {
-        ytPlaying =
-          ytPlayer.getPlayerState() === global.YT.PlayerState.PLAYING;
-      } catch (_) {
-        /* ignore */
-      }
-    }
-
-    if (!wantSound && !isPlaying && !mp3Playing && !ytPlaying) return;
-
+    if (!video) return;
+    const wasWant = wantSound || (!video.paused && !video.muted);
+    if (video.paused && !wasWant) return;
     pausedByVisibility = wantSound;
-    if (audio) audio.pause();
-    if (ytPlayer && ytReady) {
-      try {
-        ytPlayer.pauseVideo();
-      } catch (_) {
-        /* ignore */
-      }
-    }
-    setPlayingState(false);
+    video.pause();
+    setPlayingUi(false);
+    cancelProgressLoop();
   }
 
   function resumeFromVisibility() {
@@ -137,9 +171,8 @@
       return;
     }
     pausedByVisibility = false;
-    if (YOUTUBE_VIDEO_ID && playYt(true)) return;
-    playMp3().catch(() => {
-      /* user can retry via FAB */
+    playVideo(true).catch(() => {
+      /* user can retry */
     });
   }
 
@@ -148,164 +181,254 @@
       if (document.hidden) pauseForVisibility();
       else resumeFromVisibility();
     });
-
-    // Extra safety when leaving the page (bfcache / mobile browsers)
     window.addEventListener("pagehide", pauseForVisibility);
+  }
+
+  function setVolume(pct) {
+    if (!video) return;
+    const v = Math.max(0, Math.min(100, Number(pct))) / 100;
+    video.volume = v;
+    if (v > 0) {
+      lastVolume = v;
+      video.muted = false;
+      updateMuteUi(false);
+    } else {
+      video.muted = true;
+      updateMuteUi(true);
+    }
+    const { volume } = els();
+    if (volume && Number(volume.value) !== Math.round(v * 100)) {
+      volume.value = String(Math.round(v * 100));
+    }
+  }
+
+  function toggleMute() {
+    if (!video) return;
+    if (video.muted || video.volume === 0) {
+      video.muted = false;
+      const restore = lastVolume > 0 ? lastVolume : 0.6;
+      setVolume(restore * 100);
+    } else {
+      lastVolume = video.volume || lastVolume;
+      video.muted = true;
+      updateMuteUi(true);
+    }
+  }
+
+  function togglePlay() {
+    if (!video) return;
+    if (video.paused) {
+      unlocked = true;
+      playVideo(true).catch(() => playVideo(false));
+    } else {
+      // Pause but keep wantSound so launcher state can resume
+      wantSound = true;
+      video.pause();
+      setPlayingUi(false);
+      cancelProgressLoop();
+      syncProgress();
+    }
+  }
+
+  function openPanel() {
+    const { panel, toggle } = els();
+    if (!panel) return;
+    panel.hidden = false;
+    panelOpen = true;
+    if (toggle) toggle.setAttribute("aria-expanded", "true");
+    // Trigger enter animation
+    requestAnimationFrame(() => {
+      panel.classList.add("is-open");
+    });
+  }
+
+  function closePanel() {
+    const { panel, toggle } = els();
+    if (!panel) return;
+    panel.classList.remove("is-open");
+    panelOpen = false;
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
+    window.setTimeout(() => {
+      if (!panelOpen) panel.hidden = true;
+    }, 280);
+  }
+
+  function togglePanel() {
+    if (panelOpen) closePanel();
+    else openPanel();
+  }
+
+  function showFab() {
+    const { root } = els();
+    if (root) root.hidden = false;
+  }
+
+  /** Door-open gesture — unmute + play from configured start */
+  function unlockAndPlay() {
+    wantSound = true;
+    unlocked = true;
+    showFab();
+    // Keep panel closed during cinematic; guest opens with ♪
+    playVideo(true).catch(() => {
+      playVideo(false).catch(() => {
+        /* idle until user taps */
+      });
+    });
   }
 
   function play() {
     wantSound = true;
     unlocked = true;
-
-    if (YOUTUBE_VIDEO_ID) {
-      if (playYt(true)) return Promise.resolve();
-      return playMp3().catch(() => {
-        /* wait for YouTube onReady */
-      });
-    }
-
-    return playMp3();
+    return playVideo(true);
   }
 
-  /** Call from door-open (user gesture) — play MP3 (or YouTube if configured) */
-  function unlockAndPlay() {
-    wantSound = true;
-    unlocked = true;
-    showFab();
-
-    if (!YOUTUBE_VIDEO_ID) {
-      playMp3().catch(() => {
-        /* user can retry via music FAB */
-      });
-      return;
-    }
-
-    if (playYt(true)) return;
-
-    // Retry briefly while YouTube iframe finishes loading
-    let tries = 0;
-    const timer = setInterval(() => {
-      tries += 1;
-      if (playYt(true) || tries >= 25) clearInterval(timer);
-    }, 200);
-
-    playMp3().catch(() => {
-      /* YouTube preferred when ID is set */
+  function bindGlare() {
+    const { panel, glare } = els();
+    if (!panel || !glare) return;
+    panel.addEventListener("pointermove", (e) => {
+      const rect = panel.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      glare.style.left = x + "px";
+      glare.style.top = y + "px";
     });
   }
 
-  function setVolume(pct) {
-    const v = Math.max(0, Math.min(100, Number(pct))) / 100;
-    if (audio) audio.volume = v;
-    if (ytPlayer && ytReady) {
-      try {
-        ytPlayer.setVolume(Math.round(v * 100));
-        if (v === 0) ytPlayer.mute();
-        else if (wantSound) ytPlayer.unMute();
-      } catch (_) {
-        /* ignore */
+  function bindKeyboard() {
+    document.addEventListener("keydown", (e) => {
+      if (!panelOpen || !video) return;
+      const tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      if (e.code === "Space") {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === "ArrowLeft") {
+        e.preventDefault();
+        video.currentTime = Math.max(0, video.currentTime - 5);
+        syncProgress();
+      } else if (e.code === "ArrowRight") {
+        e.preventDefault();
+        video.currentTime = Math.min(
+          video.duration || video.currentTime + 5,
+          video.currentTime + 5
+        );
+        syncProgress();
+      } else if (e.code === "ArrowUp") {
+        e.preventDefault();
+        setVolume((video.volume || 0) * 100 + 5);
+      } else if (e.code === "ArrowDown") {
+        e.preventDefault();
+        setVolume((video.volume || 0) * 100 - 5);
+      } else if (e.code === "Escape") {
+        closePanel();
       }
-    }
-  }
-
-  function loadYouTubeApi() {
-    if (!YOUTUBE_VIDEO_ID) return;
-    if (global.YT && global.YT.Player) {
-      createYtPlayer();
-      return;
-    }
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
-    global.onYouTubeIframeAPIReady = createYtPlayer;
-  }
-
-  function createYtPlayer() {
-    if (!YOUTUBE_VIDEO_ID || !global.YT) return;
-    const host = document.getElementById("ytPlayer");
-    if (!host) return;
-
-    ytPlayer = new global.YT.Player("ytPlayer", {
-      height: "1",
-      width: "1",
-      videoId: YOUTUBE_VIDEO_ID,
-      playerVars: {
-        autoplay: 1,
-        mute: 1,
-        controls: 0,
-        loop: 1,
-        playlist: YOUTUBE_VIDEO_ID,
-        playsinline: 1,
-        modestbranding: 1,
-        rel: 0,
-      },
-      events: {
-        onReady: (e) => {
-          ytReady = true;
-          useYoutube = true;
-          const { volume } = els();
-          e.target.setVolume(volume ? Number(volume.value) : 60);
-
-          if (wantSound || unlocked) {
-            playYt(true);
-          } else {
-            // Warm-start muted — allowed on most browsers without a click
-            playYt(false);
-          }
-        },
-        onStateChange: (e) => {
-          if (e.data === global.YT.PlayerState.PLAYING) {
-            if (wantSound) setPlayingState(true);
-          }
-          if (
-            e.data === global.YT.PlayerState.PAUSED ||
-            e.data === global.YT.PlayerState.ENDED
-          ) {
-            if (wantSound) setPlayingState(false);
-          }
-        },
-      },
     });
-  }
-
-  function showFab() {
-    const { fab } = els();
-    if (fab) fab.hidden = false;
   }
 
   function init() {
-    audio = document.getElementById("bgMusic");
-    const { toggle, panel, play: playBtn, pause: pauseBtn, volume } = els();
+    video = /** @type {HTMLVideoElement|null} */ ($("bgMusic"));
+    const {
+      toggle,
+      panel,
+      playBtn,
+      progress,
+      volume,
+      mute,
+    } = els();
 
-    if (audio) {
-      audio.volume = volume ? Number(volume.value) / 100 : 0.6;
+    if (video) {
+      video.controls = false;
+      video.disablePictureInPicture = true;
+      const pct = volume ? Number(volume.value) : 60;
+      lastVolume = pct / 100;
+      video.volume = lastVolume;
+      video.muted = true;
     }
 
-    loadYouTubeApi();
     bindVisibilityPause();
+    bindGlare();
+    bindKeyboard();
 
     if (toggle) {
-      toggle.addEventListener("click", () => {
-        if (isPlaying) {
-          pauseAll();
-        } else {
-          play();
-        }
-        if (panel) panel.hidden = !panel.hidden;
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePanel();
       });
     }
 
-    if (playBtn) playBtn.addEventListener("click", () => play());
-    if (pauseBtn) pauseBtn.addEventListener("click", () => pauseAll());
+    if (playBtn) {
+      playBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePlay();
+      });
+    }
+
+    if (video) {
+      video.addEventListener("click", (e) => {
+        e.preventDefault();
+        togglePlay();
+      });
+      video.addEventListener("play", () => {
+        setPlayingUi(true);
+        startProgressLoop();
+      });
+      video.addEventListener("pause", () => {
+        setPlayingUi(false);
+        cancelProgressLoop();
+        syncProgress();
+      });
+      video.addEventListener("loadedmetadata", syncProgress);
+      video.addEventListener("ended", () => {
+        // loop attribute handles restart; keep UI in sync
+        setPlayingUi(true);
+      });
+    }
+
+    if (progress) {
+      progress.addEventListener("pointerdown", () => {
+        isSeeking = true;
+      });
+      progress.addEventListener("pointerup", () => {
+        isSeeking = false;
+      });
+      progress.addEventListener("input", () => {
+        if (!video || !video.duration) return;
+        const ratio = Number(progress.value) / 1000;
+        video.currentTime = ratio * video.duration;
+        const { progressFill, time } = els();
+        if (progressFill) progressFill.style.width = ratio * 100 + "%";
+        if (time) {
+          time.textContent =
+            formatTime(video.currentTime) + " / " + formatTime(video.duration);
+        }
+      });
+      progress.addEventListener("change", () => {
+        isSeeking = false;
+        if (!video.paused) startProgressLoop();
+      });
+    }
+
     if (volume) {
       volume.addEventListener("input", () => setVolume(volume.value));
     }
 
+    if (mute) {
+      mute.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleMute();
+      });
+    }
+
+    // Click outside closes panel (playback continues)
     document.addEventListener("click", (e) => {
-      const { fab, panel: p } = els();
-      if (!fab || !p || p.hidden) return;
-      if (!fab.contains(e.target)) p.hidden = true;
+      const { root } = els();
+      if (!root || !panelOpen) return;
+      if (!root.contains(e.target)) closePanel();
     });
+
+    syncProgress();
+    updateMuteUi(true);
   }
 
   global.WeddingMusic = {

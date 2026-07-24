@@ -12,15 +12,15 @@ window.WEDDING_CONFIG = {
   weddingDateISO: "2026-10-17T11:00:00+08:00",
 
   /**
-   * Background music:
-   * - Leave youtubeVideoId empty to use assets/music.mp3 (preferred).
-   * - Set a YouTube ID only if you want YouTube instead of the MP3.
+   * Background music / lyric video:
+   * - Uses assets/nuca-lyric.mp4 in the floating glass player.
+   * - Leave youtubeVideoId empty (video file is preferred).
    */
   youtubeVideoId: "",
 
   /**
-   * Start the MP3 at this time when doors open (seconds).
+   * Start the video at this time when doors open (seconds).
    * Examples: 0 = beginning, 90 = 1:30, 125 = 2:05
    */
-  musicStartSeconds: 57, // 1:20
+  musicStartSeconds: 57, // 0:57
 };

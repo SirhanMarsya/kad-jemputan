@@ -1982,7 +1982,7 @@ a {
   background: #fff;
 }
 
-body.nav-hidden .music-fab {
+body.nav-hidden .vp {
   bottom: calc(2.5rem + env(safe-area-inset-bottom));
 }
 
@@ -2022,99 +2022,9 @@ body.nav-hidden .music-fab {
   text-transform: uppercase;
 }
 
-/* ----- Music FAB ----- */
+/* Music FAB styles live in css/video-player.css */
 
-.music-fab {
-  position: absolute;
-  bottom: calc(4.25rem + env(safe-area-inset-bottom));
-  right: 0.75rem;
-  z-index: 900;
-}
-
-.music-fab[hidden] {
-  display: none !important;
-}
-
-.music-fab__btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 1px solid var(--forest-mid);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--forest-deep);
-  font-size: 1.25rem;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  transition: transform var(--transition), background var(--transition);
-}
-
-.music-fab__btn:hover,
-.music-fab__btn[aria-pressed="true"] {
-  background: var(--tiffany);
-  color: var(--forest-deep);
-  transform: scale(1.05);
-}
-
-.music-fab__btn.is-playing .music-fab__icon {
-  animation: pulse-note 1.2s ease-in-out infinite;
-}
-
-.music-fab__panel {
-  position: absolute;
-  bottom: calc(100% + 0.75rem);
-  right: 0;
-  min-width: 180px;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(74, 159, 212, 0.45);
-  color: var(--forest-deep);
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.music-fab__panel[hidden] {
-  display: none !important;
-}
-
-.music-fab__panel button {
-  border: 1px solid rgba(74, 159, 212, 0.45);
-  background: transparent;
-  color: var(--forest-deep);
-  padding: 0.45rem;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.music-fab__panel button:hover {
-  background: var(--tiffany);
-  color: var(--forest-deep);
-}
-
-.music-fab__vol {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.music-fab__vol input {
-  width: 100%;
-  accent-color: var(--gold);
-}
-
-.music-fab__playlist {
-  font-size: 0.8rem;
-  text-align: center;
-  margin-top: 0.25rem;
-  color: var(--forest-deep);
-}
-
-/* Off-screen YouTube host (needed for playback; must not use display:none) */
+/* Off-screen YouTube host (optional; kept for config.youtubeVideoId) */
 .yt-host {
   position: fixed;
   width: 1px;
@@ -2125,3 +2035,4 @@ body.nav-hidden .music-fab {
   pointer-events: none;
   overflow: hidden;
 }
+

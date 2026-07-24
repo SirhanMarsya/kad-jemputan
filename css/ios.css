@@ -26,7 +26,8 @@ select {
 /* iOS zooms focused inputs under 16px — keep form fields at 16px+ */
 .form__field input,
 .form__field textarea,
-.music-fab__panel input[type="range"] {
+.vp__volume-slider,
+.vp__progress {
   font-size: 16px;
 }
 
@@ -44,14 +45,16 @@ select {
   padding-bottom: calc(0.4rem + env(safe-area-inset-bottom));
 }
 
-.music-fab {
+.music-fab,
+.vp {
   bottom: calc(4.25rem + constant(safe-area-inset-bottom));
   bottom: calc(4.25rem + env(safe-area-inset-bottom));
   right: calc(1rem + constant(safe-area-inset-right));
   right: calc(1rem + env(safe-area-inset-right));
 }
 
-body.nav-hidden .music-fab {
+body.nav-hidden .music-fab,
+body.nav-hidden .vp {
   bottom: calc(2.5rem + constant(safe-area-inset-bottom));
   bottom: calc(2.5rem + env(safe-area-inset-bottom));
 }
@@ -62,7 +65,8 @@ body.nav-hidden .music-fab {
 }
 
 @media (max-width: 720px) {
-  .music-fab {
+  .music-fab,
+  .vp {
     bottom: calc(4.5rem + constant(safe-area-inset-bottom));
     bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
@@ -82,6 +86,9 @@ button,
 a,
 .bottom-nav__item,
 .music-fab__btn,
+.vp__launcher,
+.vp__play,
+.vp__mute,
 .radio,
 .figure {
   touch-action: manipulation;

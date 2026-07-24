@@ -161,7 +161,7 @@
     left: auto;
   }
 
-  .music-fab {
+  .vp {
     bottom: calc(4.5rem + env(safe-area-inset-bottom));
     right: 0.75rem;
   }
