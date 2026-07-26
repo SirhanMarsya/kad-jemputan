@@ -1714,6 +1714,77 @@ a {
   font-weight: 600;
 }
 
+.rsvp__form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: rgba(30, 74, 110, 0.35);
+  color: var(--forest-deep);
+}
+
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.rsvp-summary {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 1.35rem;
+  text-align: center;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 28px rgba(30, 74, 110, 0.1);
+}
+
+.rsvp-summary[hidden] {
+  display: none !important;
+}
+
+.rsvp-summary__label {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sky-mid);
+  margin: 0 0 0.85rem;
+}
+
+.rsvp-summary__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 3.5vw, 1.4rem);
+  font-weight: 600;
+  color: var(--forest-deep);
+  margin: 0 0 0.45rem;
+  line-height: 1.35;
+}
+
+.rsvp-summary__attend,
+.rsvp-summary__guests {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.88rem;
+  color: var(--ink);
+  margin: 0 0 0.35rem;
+  line-height: 1.5;
+}
+
+.rsvp-summary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+#rsvpForm[hidden] {
+  display: none !important;
+}
+
 /* ----- Forms ----- */
 
 .form {

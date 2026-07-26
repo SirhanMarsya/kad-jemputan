@@ -381,6 +381,8 @@
           </p>
         </div>
         <form class="form reveal" id="rsvpForm" novalidate>
+          <input type="hidden" name="id" id="rsvpId" value="" />
+
           <label class="form__field">
             <span>Nama Anda</span>
             <input type="text" name="name" id="rsvpName" required autocomplete="name" placeholder="Nama penuh" />
@@ -410,9 +412,24 @@
             </label>
           </div>
 
-          <button type="submit" class="btn btn--primary" id="rsvpSubmit">Hantar RSVP</button>
+          <div class="rsvp__form-actions" id="rsvpFormActions">
+            <button type="submit" class="btn btn--primary" id="rsvpSubmit">Hantar RSVP</button>
+            <button type="button" class="btn btn--ghost" id="rsvpFormCancel" hidden>Batal</button>
+          </div>
           <p class="form__status" id="rsvpStatus" role="status" aria-live="polite"></p>
         </form>
+
+        <div class="rsvp-summary reveal" id="rsvpSummary" hidden>
+          <p class="rsvp-summary__label">RSVP anda</p>
+          <p class="rsvp-summary__name" id="rsvpSummaryName"></p>
+          <p class="rsvp-summary__attend" id="rsvpSummaryAttend"></p>
+          <p class="rsvp-summary__guests" id="rsvpSummaryGuests"></p>
+          <div class="rsvp-summary__actions">
+            <button type="button" class="btn btn--primary" id="rsvpEdit">Kemaskini</button>
+            <button type="button" class="btn btn--ghost" id="rsvpDelete">Batal</button>
+          </div>
+          <p class="form__status" id="rsvpSummaryStatus" role="status" aria-live="polite"></p>
+        </div>
       </section>
 
       <section class="section wishes" id="wishes">
