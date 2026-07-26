@@ -30,10 +30,15 @@
     GROOM_HOLD: 2400,
     BRIDE_HOLD: 2400,
     RETURN_HOLD: 500,
-    AUTO_SCROLL: 55000, // slow enough to read each section
+    AUTO_SCROLL: 55000, // total travel time between pauses (approx)
+    SECTION_HOLD: 3000, // pause on jemputan / countdown / location / schedule
     // iOS often synthesizes leftover pointer/touch after the door tap
     INTERACT_GRACE: isAppleTouchDevice() ? 1200 : 400,
   };
+
+  /** Sections that get a 3s dwell during cinematic auto-scroll */
+  const SCROLL_PAUSE_IDS = ["jemputan", "countdown", "location", "schedule"];
+
 
   let running = false;
   let aborted = false;
@@ -224,7 +229,68 @@
     }
   }
 
-  function autoScrollToBottom() {
+  /** Section top relative to scroll root */
+  function sectionScrollTop(root, el, offset) {
+    const rootTop = root.getBoundingClientRect().top;
+    const elTop = el.getBoundingClientRect().top;
+    return Math.max(0, elTop - rootTop + root.scrollTop - offset);
+  }
+
+  function tweenScrollTo(root, target, speedPxPerMs) {
+    return new Promise((resolve) => {
+      if (autoScrollCancelled || aborted) {
+        resolve(false);
+        return;
+      }
+
+      let pos = root.scrollTop;
+      let last = performance.now();
+      const goingDown = target >= pos;
+
+      function tick(now) {
+        if (autoScrollCancelled || aborted) {
+          resolve(false);
+          return;
+        }
+
+        const dt = Math.min(40, Math.max(0, now - last));
+        last = now;
+
+        if (goingDown) {
+          pos = Math.min(target, pos + speedPxPerMs * dt);
+        } else {
+          pos = Math.max(target, pos - speedPxPerMs * dt);
+        }
+        root.scrollTop = pos;
+
+        const done = goingDown ? pos >= target - 1 : pos <= target + 1;
+        if (done) {
+          root.scrollTop = target;
+          autoScrollRaf = null;
+          resolve(true);
+          return;
+        }
+        autoScrollRaf = requestAnimationFrame(tick);
+      }
+
+      autoScrollRaf = requestAnimationFrame(tick);
+    });
+  }
+
+  function holdPause(ms) {
+    return new Promise((resolve) => {
+      if (autoScrollCancelled || aborted) {
+        resolve(false);
+        return;
+      }
+      const id = setTimeout(() => {
+        resolve(!(autoScrollCancelled || aborted));
+      }, ms);
+      timers.push(id);
+    });
+  }
+
+  async function autoScrollToBottom() {
     if (aborted) return;
 
     const root = getScrollRoot();
@@ -244,67 +310,81 @@
       Math.max(0, root.scrollHeight - root.clientHeight);
 
     root.scrollTop = 0;
-    let end = measureEnd();
 
-    if (end <= 4) {
-      requestAnimationFrame(() => {
-        if (aborted) return;
-        end = measureEnd();
-        if (end > 4) startTween(root, 0, end, prevBehavior);
-        else {
-          root.style.scrollBehavior = prevBehavior || "";
-          document.body.classList.remove("is-auto-scrolling");
-        }
-      });
-      return;
-    }
-
-    startTween(root, 0, end, prevBehavior);
-  }
-
-  function startTween(root, start, end, prevBehavior) {
-    // Constant px/ms so growing content (images / reveals) doesn't stall the scroll
-    const speed = Math.max(end, 1) / DUR.AUTO_SCROLL;
-    let pos = start;
-    let last = performance.now();
-    const t0 = last;
-    const maxMs = DUR.AUTO_SCROLL * 1.75;
-
-    function finish() {
+    const finish = () => {
       autoScrollRaf = null;
-      root.scrollTop = Math.max(0, root.scrollHeight - root.clientHeight);
+      root.scrollTop = measureEnd();
       root.style.scrollBehavior = prevBehavior || "";
       document.body.classList.remove("is-auto-scrolling");
       unbindInteractAbort();
+    };
+
+    const abortCleanup = () => {
+      root.style.scrollBehavior = prevBehavior || "";
+      document.body.classList.remove("is-auto-scrolling");
+      unbindInteractAbort();
+    };
+
+    // Wait a frame so layout settles after reveals
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    if (aborted || autoScrollCancelled) {
+      abortCleanup();
+      return;
     }
 
-    function tick(now) {
-      if (autoScrollCancelled || aborted) {
-        root.style.scrollBehavior = prevBehavior || "";
-        document.body.classList.remove("is-auto-scrolling");
-        unbindInteractAbort();
+    const end = measureEnd();
+    if (end <= 4) {
+      abortCleanup();
+      return;
+    }
+
+    // Travel speed based on full-page duration
+    const speed = Math.max(end, 1) / DUR.AUTO_SCROLL;
+    const pinOffset = 12;
+
+    const pauseSections = SCROLL_PAUSE_IDS.map((id) =>
+      document.getElementById(id)
+    ).filter(Boolean);
+
+    for (let i = 0; i < pauseSections.length; i++) {
+      if (aborted || autoScrollCancelled) {
+        abortCleanup();
         return;
       }
 
-      // Cap dt so a backgrounded tab doesn't jump a huge distance
-      const dt = Math.min(40, Math.max(0, now - last));
-      last = now;
+      const section = pauseSections[i];
+      // Re-measure each time (layout can shift)
+      const target = Math.min(
+        measureEnd(),
+        sectionScrollTop(root, section, pinOffset)
+      );
 
-      const liveEnd = Math.max(0, root.scrollHeight - root.clientHeight);
-      pos = Math.min(liveEnd, pos + speed * dt);
-      root.scrollTop = pos;
+      const ok = await tweenScrollTo(root, target, speed);
+      if (!ok) {
+        abortCleanup();
+        return;
+      }
 
-      if (pos < liveEnd - 1.5 && now - t0 < maxMs) {
-        autoScrollRaf = requestAnimationFrame(tick);
-      } else if (pos < liveEnd - 1.5) {
-        // Safety: snap to bottom if we ran long
-        finish();
-      } else {
-        finish();
+      const held = await holdPause(DUR.SECTION_HOLD);
+      if (!held) {
+        abortCleanup();
+        return;
       }
     }
 
-    autoScrollRaf = requestAnimationFrame(tick);
+    // Continue to bottom after last pause
+    if (aborted || autoScrollCancelled) {
+      abortCleanup();
+      return;
+    }
+
+    const toBottom = await tweenScrollTo(root, measureEnd(), speed);
+    if (!toBottom) {
+      abortCleanup();
+      return;
+    }
+
+    finish();
   }
 
   /**

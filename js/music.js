@@ -20,6 +20,17 @@
   let lastVolume = 0.6;
   let panelOpen = false;
 
+  function isAppleTouchDevice() {
+    const ua = navigator.userAgent || "";
+    return (
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    );
+  }
+
+  // iOS Safari ignores HTMLMediaElement.volume — only muted works.
+  const IOS_VOLUME_LOCKED = isAppleTouchDevice();
+
   function $(id) {
     return document.getElementById(id);
   }
@@ -187,6 +198,23 @@
   function setVolume(pct) {
     if (!video) return;
     const v = Math.max(0, Math.min(100, Number(pct))) / 100;
+
+    // iOS: volume property is read-only / ignored — mute toggle only
+    if (IOS_VOLUME_LOCKED) {
+      if (v <= 0) {
+        video.muted = true;
+        updateMuteUi(true);
+      } else {
+        video.muted = false;
+        lastVolume = v;
+        updateMuteUi(false);
+      }
+      const { volume } = els();
+      // Keep slider visually at 0 or 100 so it matches mute state
+      if (volume) volume.value = video.muted ? "0" : "100";
+      return;
+    }
+
     video.volume = v;
     if (v > 0) {
       lastVolume = v;
@@ -204,14 +232,26 @@
 
   function toggleMute() {
     if (!video) return;
-    if (video.muted || video.volume === 0) {
+    if (video.muted || (!IOS_VOLUME_LOCKED && video.volume === 0)) {
       video.muted = false;
-      const restore = lastVolume > 0 ? lastVolume : 0.6;
-      setVolume(restore * 100);
+      if (!IOS_VOLUME_LOCKED) {
+        const restore = lastVolume > 0 ? lastVolume : 0.6;
+        video.volume = restore;
+        const { volume } = els();
+        if (volume) volume.value = String(Math.round(restore * 100));
+      } else {
+        const { volume } = els();
+        if (volume) volume.value = "100";
+      }
+      updateMuteUi(false);
     } else {
-      lastVolume = video.volume || lastVolume;
+      if (!IOS_VOLUME_LOCKED) lastVolume = video.volume || lastVolume;
       video.muted = true;
       updateMuteUi(true);
+      if (IOS_VOLUME_LOCKED) {
+        const { volume } = els();
+        if (volume) volume.value = "0";
+      }
     }
   }
 
@@ -316,10 +356,20 @@
         syncProgress();
       } else if (e.code === "ArrowUp") {
         e.preventDefault();
-        setVolume((video.volume || 0) * 100 + 5);
+        if (IOS_VOLUME_LOCKED) {
+          video.muted = false;
+          updateMuteUi(false);
+        } else {
+          setVolume((video.volume || 0) * 100 + 5);
+        }
       } else if (e.code === "ArrowDown") {
         e.preventDefault();
-        setVolume((video.volume || 0) * 100 - 5);
+        if (IOS_VOLUME_LOCKED) {
+          video.muted = true;
+          updateMuteUi(true);
+        } else {
+          setVolume((video.volume || 0) * 100 - 5);
+        }
       } else if (e.code === "Escape") {
         closePanel();
       }
@@ -342,8 +392,19 @@
       video.disablePictureInPicture = true;
       const pct = volume ? Number(volume.value) : 60;
       lastVolume = pct / 100;
-      video.volume = lastVolume;
+      // volume is ignored on iOS; muted is the real control
+      if (!IOS_VOLUME_LOCKED) video.volume = lastVolume;
       video.muted = true;
+    }
+
+    // Hide useless volume slider on iOS (hardware volume only)
+    if (IOS_VOLUME_LOCKED) {
+      document.documentElement.classList.add("vp-ios-volume-locked");
+      if (volume) {
+        volume.setAttribute("aria-hidden", "true");
+        volume.tabIndex = -1;
+        volume.title = "iOS uses the device volume buttons";
+      }
     }
 
     bindVisibilityPause();

@@ -471,8 +471,16 @@ body.nav-hidden .vp {
   }
 }
 
-/* Prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
+/* iOS cannot control HTML5 volume — hide slider, keep mute button */
+html.vp-ios-volume-locked .vp__volume-slider,
+html.is-ios .vp__volume-slider {
+  display: none !important;
+}
+
+html.vp-ios-volume-locked .vp__volume,
+html.is-ios .vp__volume {
+  justify-content: flex-end;
+}
   .vp__card,
   .vp__launcher,
   .vp__play,
