@@ -58,8 +58,7 @@
 
   async function apiPost(payload) {
     if (!SCRIPT_URL) {
-      // Offline demo — still persist locally
-      return { ok: true, demo: true, rsvp: payload };
+      return { ok: true, demo: true, apiVersion: 2, rsvp: payload };
     }
 
     const res = await fetch(SCRIPT_URL, {
@@ -71,6 +70,14 @@
     if (!res.ok || data.ok === false) {
       const err = new Error(data.error || "Could not save RSVP");
       err.missing = Boolean(data.missing);
+      throw err;
+    }
+    // Old deployment always appends and has no apiVersion
+    if (data.apiVersion !== 2) {
+      const err = new Error(
+        "Google Script belum dikemas kini. Deploy semula Code.gs (New version)."
+      );
+      err.needsRedeploy = true;
       throw err;
     }
     return data;
