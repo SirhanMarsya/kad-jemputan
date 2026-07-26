@@ -140,7 +140,8 @@ img,
 .music-fab__btn,
 .popup__backdrop,
 .mist,
-.contact-card {
+.contact-card,
+.wishes__glass {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
@@ -160,6 +161,10 @@ img,
 
 .info-card {
   background: rgba(255, 255, 255, 0.96);
+}
+
+.wishes__glass {
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .countdown__item {

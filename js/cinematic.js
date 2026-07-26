@@ -136,23 +136,29 @@
     document.querySelectorAll(".reveal:not(.is-shown)").forEach((el) => {
       el.classList.add("is-shown");
     });
+  }
 
-    // Show bottom nav when cinematic finishes or is interrupted
+  /** Bottom nav appears only when full cinematic is done or user stops it */
+  function notifyCinematicComplete() {
     document.dispatchEvent(new CustomEvent("wedding:cinematic-settled"));
   }
 
   // ----- Interrupt: user interaction stops cinematic -----
   let touchStartY = null;
 
+  function isAutoScrollActive() {
+    return Boolean(autoScrollRaf) || document.body.classList.contains("is-auto-scrolling");
+  }
+
   function onUserInteract() {
-    if (!running && !autoScrollRaf) return;
+    if (!running && !isAutoScrollActive()) return;
     abortCinematic();
   }
 
   function onTouchStart(e) {
-    if (!running && !autoScrollRaf) return;
+    if (!running && !isAutoScrollActive()) return;
     // During auto-scroll, wait for a real swipe — a light tap shouldn't kill it
-    if (autoScrollRaf && !running) {
+    if (isAutoScrollActive() && !running) {
       const t = e.touches && e.touches[0];
       touchStartY = t ? t.clientY : null;
       return;
@@ -171,9 +177,9 @@
   }
 
   function onPointerDown(e) {
-    if (!running && !autoScrollRaf) return;
+    if (!running && !isAutoScrollActive()) return;
     // Ignore while auto-scrolling (touch handlers cover mobile; mouse uses wheel)
-    if (autoScrollRaf && !running && e.pointerType === "touch") return;
+    if (isAutoScrollActive() && !running && e.pointerType === "touch") return;
     // On iOS, pointerdown often fires with the same door-open gesture /
     // music-unmute tap and would abort the cinematic instantly
     if (isAppleTouchDevice() && e.pointerType === "touch") return;
@@ -217,6 +223,7 @@
     settleScene(scene, intro);
     running = false;
     unbindInteractAbort();
+    notifyCinematicComplete();
   }
 
   // ----- Stage 9: auto-scroll (cancel on user scroll) -----
@@ -317,12 +324,15 @@
       root.style.scrollBehavior = prevBehavior || "";
       document.body.classList.remove("is-auto-scrolling");
       unbindInteractAbort();
+      notifyCinematicComplete();
     };
 
     const abortCleanup = () => {
       root.style.scrollBehavior = prevBehavior || "";
       document.body.classList.remove("is-auto-scrolling");
       unbindInteractAbort();
+      // abortCinematic already notifies; this covers cancelled scrolls without abort
+      if (!aborted) notifyCinematicComplete();
     };
 
     // Wait a frame so layout settles after reveals

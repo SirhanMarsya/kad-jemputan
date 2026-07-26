@@ -1156,11 +1156,19 @@ a {
 
 .jemputan__invite-line {
   font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(0.9rem, 2.8vw, 1rem);
+  font-style: normal;
+  font-size: clamp(0.88rem, 2.6vw, 0.98rem);
   color: #000000;
+  line-height: 1.65;
   margin: 0 0 1rem;
-  max-width: 24rem;
+  max-width: 26rem;
+}
+
+@media (min-width: 721px) {
+  .jemputan__invite-line {
+    font-size: 0.92rem;
+    max-width: 34rem;
+  }
 }
 
 .jemputan__couple-block {
@@ -1808,20 +1816,32 @@ a {
 
 /* ----- Wishes ----- */
 
+.wishes__glass {
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  padding: 0.85rem 0.75rem 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    0 10px 32px rgba(30, 74, 110, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
 .wishes__list {
-  margin-top: 3rem;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  max-width: 520px;
+  max-width: none;
   max-height: min(42vh, 360px);
-  margin-left: auto;
-  margin-right: auto;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 0.25rem 0.5rem 0.75rem;
+  padding: 0.25rem 0.35rem 0.5rem;
   scrollbar-width: thin;
   scrollbar-color: rgba(10, 143, 138, 0.35) transparent;
 }
