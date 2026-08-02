@@ -120,7 +120,7 @@
         return;
       }
 
-      setStatus(status, "Sending…");
+      setStatus(status, "");
 
       const run = () => submitWish({ name, wish });
 

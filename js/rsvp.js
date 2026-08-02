@@ -292,10 +292,7 @@
         phone: payload.phone,
       };
 
-      setStatus(
-        status,
-        action === "update" ? "Mengemas kini…" : "Menghantar…"
-      );
+      setStatus(status, "");
 
       const run = async () => {
         const result = await apiPost(body);
