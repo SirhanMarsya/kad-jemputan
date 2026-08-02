@@ -120,11 +120,11 @@
         return;
       }
 
-      submitBtn.disabled = true;
       setStatus(status, "Sending…");
 
-      try {
-        const result = await submitWish({ name, wish });
+      const run = () => submitWish({ name, wish });
+
+      const onSuccess = async (result) => {
         setStatus(
           status,
           result.demo
@@ -133,10 +133,32 @@
         );
         form.reset();
         await refresh();
-      } catch (err) {
-        setStatus(status, err.message || "Something went wrong.", true);
-      } finally {
-        submitBtn.disabled = false;
+      };
+
+      try {
+        if (window.WeddingButton && WeddingButton.withSubmit) {
+          // Option B: restore "Hantar" after success hold
+          await WeddingButton.withSubmit(submitBtn, run, {
+            afterSuccess: "reset",
+            holdMs: 2000,
+            onComplete: onSuccess,
+            onError: (err) => {
+              setStatus(status, err.message || "Something went wrong.", true);
+            },
+          });
+        } else {
+          submitBtn.disabled = true;
+          try {
+            const result = await run();
+            await onSuccess(result);
+          } catch (err) {
+            setStatus(status, err.message || "Something went wrong.", true);
+          } finally {
+            submitBtn.disabled = false;
+          }
+        }
+      } catch (_) {
+        /* status already set in onError */
       }
     });
   }

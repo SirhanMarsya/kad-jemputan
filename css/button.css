@@ -1,0 +1,438 @@
+/* ============================================
+   Glass-Neumorphism submit button
+   Frosted glass + soft depth — appearance preserved
+   Animation: idle → pressed → compact → circle
+              → loading → success | error
+   ============================================ */
+
+:root {
+  --primary-color: #1e4a6e;
+  --btn-neo-text: var(--primary-color);
+  --btn-neo-accent: #5eb5e8;
+  --btn-neo-glass: rgba(255, 255, 255, 0.15);
+  --btn-neo-glass-hover: rgba(255, 255, 255, 0.28);
+  --btn-neo-border: rgba(255, 255, 255, 0.25);
+  --btn-neo-ease: 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  --btn-neo-press: 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  --btn-neo-morph: 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  --btn-neo-circle: 58px;
+  --btn-neo-compact: 112px;
+}
+
+/* ---------- State 1: Idle (default glass pill) ---------- */
+.btn-neo {
+  --btn-neo-from-w: auto;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 58px;
+  min-width: 180px;
+  max-width: 320px;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--btn-neo-border);
+  cursor: pointer;
+  font-family: "Poppins", var(--font-body, sans-serif);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--btn-neo-text);
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.42) 0%,
+      var(--btn-neo-glass) 42%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(18px) saturate(1.35);
+  box-shadow:
+    0 10px 28px rgba(30, 74, 110, 0.16),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(0) scale(1);
+  transition:
+    transform var(--btn-neo-ease),
+    box-shadow var(--btn-neo-ease),
+    background var(--btn-neo-ease),
+    border-color var(--btn-neo-ease),
+    filter var(--btn-neo-ease),
+    width var(--btn-neo-morph),
+    min-width var(--btn-neo-morph),
+    max-width var(--btn-neo-morph),
+    padding var(--btn-neo-morph),
+    gap var(--btn-neo-morph),
+    border-radius var(--btn-neo-morph);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  user-select: none;
+  will-change: transform, width;
+}
+
+/* Sheen overlay — Apple-like glass reflection */
+.btn-neo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 38%,
+    transparent 58%
+  );
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+  transition: opacity var(--btn-neo-ease);
+}
+
+.btn-neo__label {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  transform: scale(1);
+  white-space: nowrap;
+  transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-neo__spinner,
+.btn-neo__check {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  opacity: 0;
+  transform: scale(0.55);
+  pointer-events: none;
+  transition:
+    opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-neo__spinner {
+  border-radius: 50%;
+  border: 2.5px solid rgba(30, 74, 110, 0.18);
+  border-top-color: var(--primary-color);
+  box-sizing: border-box;
+}
+
+.btn-neo__check {
+  color: var(--primary-color);
+  filter: drop-shadow(0 1px 2px rgba(30, 74, 110, 0.18));
+}
+
+.btn-neo__check svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.btn-neo__check-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.btn-neo__ripple {
+  position: absolute;
+  z-index: 1;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.btn-neo__ripple.is-animating {
+  animation: btn-neo-ripple 0.65s ease-out forwards;
+}
+
+/* Hover — lift + elegant glass glow */
+.btn-neo:hover:not(:disabled):not(.is-pressed):not(.is-compacting):not(.is-loading):not(.is-success):not(.is-error) {
+  transform: translateY(-2px) scale(1.03);
+  border-color: rgba(255, 255, 255, 0.45);
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      var(--btn-neo-glass-hover) 45%,
+      rgba(255, 255, 255, 0.16) 100%
+    );
+  box-shadow:
+    0 14px 36px rgba(30, 74, 110, 0.2),
+    0 0 24px rgba(94, 181, 232, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-neo:hover:not(:disabled):not(.is-pressed):not(.is-compacting):not(.is-loading):not(.is-success):not(.is-error)::before {
+  opacity: 1;
+}
+
+/* Native active fallback (pointer) */
+.btn-neo:active:not(:disabled):not(.is-pressed):not(.is-compacting):not(.is-loading):not(.is-success):not(.is-error) {
+  transform: translateY(0) scale(0.98);
+  transition-duration: var(--btn-neo-press);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 4px 14px rgba(30, 74, 110, 0.12),
+    inset 4px 4px 12px rgba(30, 74, 110, 0.1),
+    inset -3px -3px 10px rgba(255, 255, 255, 0.45);
+}
+
+/* Focus — soft sky accent ring */
+.btn-neo:focus {
+  outline: none;
+}
+
+.btn-neo:focus-visible:not(.is-pressed):not(.is-compacting):not(.is-loading):not(.is-success) {
+  box-shadow:
+    0 10px 28px rgba(30, 74, 110, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 0 0 3px rgba(94, 181, 232, 0.4),
+    0 0 20px rgba(94, 181, 232, 0.45);
+}
+
+/* Shared morph lock: keep centered while shrinking */
+.btn-neo.is-pressed,
+.btn-neo.is-compacting,
+.btn-neo.is-loading,
+.btn-neo.is-success {
+  align-self: center;
+  margin-inline: auto;
+  pointer-events: none;
+}
+
+/* ---------- State 2: Pressed (scale 0.98, 150ms) ---------- */
+.btn-neo.is-pressed {
+  cursor: wait;
+  transform: translateY(0) scale(0.98);
+  transition-duration: var(--btn-neo-press);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 4px 14px rgba(30, 74, 110, 0.12),
+    inset 4px 4px 12px rgba(30, 74, 110, 0.1),
+    inset -3px -3px 10px rgba(255, 255, 255, 0.45);
+}
+
+/* Lock measured idle width before morph (set via --btn-neo-from-w) */
+.btn-neo.is-pressed,
+.btn-neo.is-width-locked {
+  width: var(--btn-neo-from-w);
+  min-width: var(--btn-neo-from-w);
+  max-width: var(--btn-neo-from-w);
+}
+
+/* ---------- State 3a: Compact rounded pill ---------- */
+.btn-neo.is-compacting {
+  cursor: wait;
+  width: var(--btn-neo-compact) !important;
+  min-width: var(--btn-neo-compact) !important;
+  max-width: var(--btn-neo-compact) !important;
+  padding: 0 1rem !important;
+  gap: 0;
+  transform: scale(0.99);
+  box-shadow:
+    0 6px 18px rgba(30, 74, 110, 0.14),
+    inset 3px 3px 10px rgba(30, 74, 110, 0.08),
+    inset -2px -2px 8px rgba(255, 255, 255, 0.4);
+}
+
+.btn-neo.is-compacting .btn-neo__label {
+  opacity: 0;
+  transform: scale(0.88);
+}
+
+/* ---------- State 3b / 4: Perfect circle + spinner ---------- */
+.btn-neo.is-loading {
+  cursor: wait;
+  width: var(--btn-neo-circle) !important;
+  min-width: var(--btn-neo-circle) !important;
+  max-width: var(--btn-neo-circle) !important;
+  height: var(--btn-neo-circle);
+  padding: 0 !important;
+  gap: 0;
+  border-radius: 50%;
+  transform: scale(1);
+  box-shadow:
+    0 6px 18px rgba(30, 74, 110, 0.14),
+    inset 3px 3px 10px rgba(30, 74, 110, 0.08),
+    inset -2px -2px 8px rgba(255, 255, 255, 0.4);
+}
+
+.btn-neo.is-loading .btn-neo__label {
+  opacity: 0;
+  transform: scale(0.8);
+  visibility: hidden;
+}
+
+.btn-neo.is-loading .btn-neo__spinner {
+  opacity: 1;
+  transform: scale(1);
+  animation: btn-neo-spin 0.75s linear infinite;
+}
+
+.btn-neo.is-loading:hover,
+.btn-neo.is-compacting:hover,
+.btn-neo.is-pressed:hover {
+  transform: scale(1);
+}
+
+/* ---------- State 5: Success (glass + soft glow + draw check) ---------- */
+.btn-neo.is-success {
+  cursor: default;
+  width: var(--btn-neo-circle) !important;
+  min-width: var(--btn-neo-circle) !important;
+  max-width: var(--btn-neo-circle) !important;
+  height: var(--btn-neo-circle);
+  padding: 0 !important;
+  gap: 0;
+  border-radius: 50%;
+  border-color: rgba(94, 181, 232, 0.55);
+  /* Soft primary tint — still transparent glass, not flat green */
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(94, 181, 232, 0.28) 45%,
+      rgba(255, 255, 255, 0.14) 100%
+    );
+  box-shadow:
+    0 10px 28px rgba(30, 74, 110, 0.16),
+    0 0 0 3px rgba(94, 181, 232, 0.28),
+    0 0 28px rgba(94, 181, 232, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  animation: btn-neo-pop 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-neo.is-success .btn-neo__label,
+.btn-neo.is-success .btn-neo__spinner {
+  opacity: 0;
+  transform: scale(0.5);
+  visibility: hidden;
+  animation: none;
+}
+
+.btn-neo.is-success .btn-neo__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.btn-neo.is-success .btn-neo__check-path {
+  animation: btn-neo-draw 480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------- State 7: Error — gentle shake, then restore ---------- */
+.btn-neo.is-error {
+  animation: btn-neo-shake 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes btn-neo-spin {
+  to {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@keyframes btn-neo-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.22;
+  }
+  100% {
+    transform: scale(18);
+    opacity: 0;
+  }
+}
+
+@keyframes btn-neo-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes btn-neo-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes btn-neo-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .btn-neo:not(.is-pressed):not(.is-compacting):not(.is-loading):not(.is-success) {
+    min-width: 160px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 720px) {
+  .btn-neo:not(.is-pressed):not(.is-compacting):not(.is-loading):not(.is-success) {
+    width: 100%;
+    min-width: 0;
+    max-width: 320px;
+    font-size: 18px;
+  }
+
+  .form .btn-neo {
+    align-self: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-neo,
+  .btn-neo__ripple,
+  .btn-neo__spinner,
+  .btn-neo__check,
+  .btn-neo__check-path {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn-neo.is-success .btn-neo__check-path {
+    stroke-dashoffset: 0;
+  }
+}

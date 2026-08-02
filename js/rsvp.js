@@ -189,12 +189,10 @@
 
   function setEditMode(editing) {
     const submitBtn = $("rsvpSubmit");
-    const cancelBtn = $("rsvpFormCancel");
     if (submitBtn) {
-      submitBtn.textContent = editing ? "Kemaskini" : "Hantar RSVP";
-    }
-    if (cancelBtn) {
-      cancelBtn.hidden = !editing;
+      const label = editing ? "Kemaskini" : "Hantar";
+      if (window.WeddingButton) WeddingButton.setLabel(submitBtn, label);
+      else submitBtn.textContent = label;
     }
     const form = $("rsvpForm");
     if (form) form.dataset.mode = editing ? "edit" : "create";
@@ -270,7 +268,6 @@
     const form = $("rsvpForm");
     const status = $("rsvpStatus");
     const submitBtn = $("rsvpSubmit");
-    const formCancelBtn = $("rsvpFormCancel");
     const editBtn = $("rsvpEdit");
     const deleteBtn = $("rsvpDelete");
     if (!form) return;
@@ -286,34 +283,39 @@
       if (!validate(payload, status)) return;
 
       const action = payload.mode === "edit" ? "update" : "create";
-      submitBtn.disabled = true;
+      const body = {
+        action,
+        id: payload.id,
+        name: payload.name,
+        attend: payload.attend,
+        guests: payload.guests,
+        phone: payload.phone,
+      };
+
       setStatus(
         status,
         action === "update" ? "Mengemas kini…" : "Menghantar…"
       );
 
-      try {
-        const body = {
-          action,
-          id: payload.id,
-          name: payload.name,
-          attend: payload.attend,
-          guests: payload.guests,
-          phone: payload.phone,
-        };
+      const run = async () => {
         const result = await apiPost(body);
-        const saved = result.rsvp || body;
-        writeLocal(saved);
-        showSummary(saved);
+        return { result, saved: result.rsvp || body, action };
+      };
+
+      const onSuccess = (data) => {
+        writeLocal(data.saved);
+        showSummary(data.saved);
         setStatus(
           $("rsvpSummaryStatus"),
-          result.demo
+          data.result.demo
             ? "Disimpan secara tempatan (sambung Google Sheets untuk sync online)."
-            : action === "update"
+            : data.action === "update"
               ? "RSVP berjaya dikemas kini."
               : "Terima kasih! RSVP anda telah diterima."
         );
-      } catch (err) {
+      };
+
+      const onFail = (err) => {
         if (err.missing && payload.mode === "edit") {
           clearLocal();
           setStatus(
@@ -327,8 +329,30 @@
         } else {
           setStatus(status, err.message || "Ralat. Sila cuba lagi.", true);
         }
-      } finally {
-        submitBtn.disabled = false;
+      };
+
+      try {
+        if (window.WeddingButton && WeddingButton.withSubmit) {
+          // Option A: after checkmark, close form into summary view
+          await WeddingButton.withSubmit(submitBtn, run, {
+            afterSuccess: "callback",
+            holdMs: 2000,
+            onComplete: onSuccess,
+            onError: onFail,
+          });
+        } else {
+          submitBtn.disabled = true;
+          try {
+            const data = await run();
+            onSuccess(data);
+          } catch (err) {
+            onFail(err);
+          } finally {
+            submitBtn.disabled = false;
+          }
+        }
+      } catch (_) {
+        /* onError already handled status */
       }
     });
 
@@ -341,17 +365,6 @@
         }
         fillForm(local);
         showForm(true);
-      });
-    }
-
-    if (formCancelBtn) {
-      formCancelBtn.addEventListener("click", () => {
-        const local = readLocal();
-        if (local) showSummary(local);
-        else {
-          clearForm();
-          showForm(false);
-        }
       });
     }
 

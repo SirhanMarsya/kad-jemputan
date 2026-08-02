@@ -54,6 +54,7 @@
   --tiffany: #b5dff7;
   --tiffany-mid: #d4ecfa;
   --tiffany-deep: #5eb5e8;
+  --primary-color: #1e4a6e;
 }
 
 /* ----- Page loader ----- */
@@ -1714,13 +1715,6 @@ a {
   font-weight: 600;
 }
 
-.rsvp__form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-}
-
 .btn--ghost {
   background: transparent;
   border-color: rgba(30, 74, 110, 0.35);
@@ -1775,10 +1769,124 @@ a {
 
 .rsvp-summary__actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-wrap: nowrap;
+  gap: 0.65rem;
   justify-content: center;
+  align-items: stretch;
   margin-top: 1.25rem;
+}
+
+.btn-glass {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  padding: 0 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font-family: "Poppins", var(--font-body, sans-serif);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--primary-color, #1e4a6e);
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.15) 42%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(18px) saturate(1.35);
+  box-shadow:
+    0 8px 22px rgba(30, 74, 110, 0.14),
+    0 2px 6px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+  transition:
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.btn-glass:hover {
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.28) 45%,
+      rgba(255, 255, 255, 0.14) 100%
+    );
+  transform: translateY(-1px);
+  box-shadow:
+    0 12px 28px rgba(30, 74, 110, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.btn-glass:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-glass--blue {
+  color: #fff;
+  border-color: rgba(94, 181, 232, 0.55);
+  background:
+    linear-gradient(
+      165deg,
+      rgba(120, 198, 245, 0.72) 0%,
+      rgba(64, 148, 210, 0.62) 45%,
+      rgba(30, 106, 168, 0.68) 100%
+    );
+  box-shadow:
+    0 8px 22px rgba(30, 106, 168, 0.28),
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn-glass--blue:hover {
+  color: #fff;
+  background:
+    linear-gradient(
+      165deg,
+      rgba(140, 210, 250, 0.82) 0%,
+      rgba(80, 165, 225, 0.72) 45%,
+      rgba(40, 120, 185, 0.78) 100%
+    );
+  box-shadow:
+    0 12px 28px rgba(30, 106, 168, 0.34),
+    0 2px 8px rgba(0, 0, 0, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.btn-glass--icon {
+  flex: 0 0 auto;
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+}
+
+.rsvp-summary__trash {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #e11d48;
+  display: block;
+}
+
+.rsvp-summary__delete:hover .rsvp-summary__trash {
+  color: #be123c;
 }
 
 #rsvpForm[hidden] {

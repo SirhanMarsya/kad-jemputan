@@ -141,7 +141,9 @@ img,
 .popup__backdrop,
 .mist,
 .contact-card,
-.wishes__glass {
+.wishes__glass,
+.btn-neo,
+.btn-glass {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
@@ -165,6 +167,18 @@ img,
 
 .wishes__glass {
   background: rgba(255, 255, 255, 0.88);
+}
+
+.btn-neo,
+.btn-glass:not(.btn-glass--blue) {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.btn-glass--blue {
+  background: rgba(64, 148, 210, 0.88);
+  border-color: rgba(120, 198, 245, 0.65);
+  color: #fff;
 }
 
 .countdown__item {
